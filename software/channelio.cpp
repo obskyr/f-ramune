@@ -69,7 +69,7 @@ Output_ShiftRegister<T>::Output_ShiftRegister(
 template <class T>
 void Output_ShiftRegister<T>::output(T n)
 {
-    for (int bitNum = _numBits - 1; bitNum >= 0; bitNum++) {
+    for (int bitNum = _numBits - 1; bitNum >= 0; bitNum--) {
         digitalWrite(_dataPin, (n >> bitNum) & 1);
         digitalWrite(_shiftPin, HIGH);
         digitalWrite(_shiftPin, LOW);
