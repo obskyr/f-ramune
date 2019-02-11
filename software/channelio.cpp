@@ -118,7 +118,6 @@ uint8_t InputOutput_Port::input()
 
 void InputOutput_Port::output(uint8_t n)
 {
-    Serial.println("Called InputOutput_Port::output.");
     n >>= _valueStartBit;
     n <<= _portStartBit;
     n &= _portMask;

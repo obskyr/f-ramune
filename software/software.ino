@@ -48,32 +48,19 @@ MemoryChip memoryChip(&ADDRESS_CHANNEL, &DATA_CHANNEL,
                       PIN_MEMORY_CE, PIN_MEMORY_OE,
                       PIN_MEMORY_WE, PIN_MEMORY_POWER);
 
-InputOutputChannelSet<uint8_t, InputOutput_Port> iocs(
-    sizeof(DATA_CHANNEL_PORTS) / sizeof(*DATA_CHANNEL_PORTS),
-    DATA_CHANNEL_PORTS
-);
-OutputChannelSet<uint8_t, InputOutput_Port> ocs(
-    sizeof(DATA_CHANNEL_PORTS) / sizeof(*DATA_CHANNEL_PORTS),
-    DATA_CHANNEL_PORTS
-);
-
 void setup() {
     Serial.begin(9600);
     Serial.println("Starting!");
-
-    Serial.println("Output directly from IOCS array:");
-    DATA_CHANNEL_PORTS[0]->output(0xA0);
-    Serial.println("InputOutputChannelSet (containing IOC):");
-    iocs.output(0xA5);
-    Serial.println("Cast to OutputChannel:");
-    ((OutputChannelSet<uint8_t, InputOutput_Port>*) &iocs)->output(0xA6);
-    Serial.println("OutputChannel (containing IOC):");
-    ocs.output(0xA7);
-    Serial.println("Start test finished.");
-
     ADDRESS_CHANNEL.initOutput();
-
     memoryChip.switchToWriteMode();
+
+    unsigned long t1 = millis();
+    for (unsigned int x = 0; x < 10000; x++)  {
+        memoryChip.writeByte(x, 0xA5);
+    }
+    unsigned long t2 = millis();
+    Serial.print("Microseconds per write (target: <69): ");
+    Serial.println(((t2 - t1) * 1000) / 10000.0);
 }
 
 int i = 0;
@@ -82,12 +69,6 @@ uint8_t nums[] = {0b10000001, 0, 0b00000001, 0b10000000};
 void loop() {
     i += 1;
     i %= sizeof(nums) / sizeof(*nums);
-    unsigned long t1 = millis();
-    for (unsigned int x = 0; x < 10000; x++)  {
-        memoryChip.writeByte(x, 0xA5);
-    }
-    unsigned long t2 = millis();
-    Serial.print("Microseconds per write (target: <69): ");
-    Serial.println(((t2 - t1) * 1000) / 10000.0);
+    ADDRESS_CHANNEL.output(nums[i]);
     delay(700);
 }

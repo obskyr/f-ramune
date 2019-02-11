@@ -8,13 +8,13 @@
 // switchToReadMode and switchToWriteMode properly.
 
 /*
-    TODO: Optimize this somehow... Even using ports, a byte write takes ~70 µs.
-    To match the target baud rate of 115200, a read/write needs to take less
-    than 69 µs. Possibilities to make this work:
+    TODO: Optimize this somehow... Even using ports, a byte write takes a
+    minimum of ~72 µs. To match the target baud rate of 115200, a read/write
+    needs to take less than 69 µs. Possibilities to make this work:
     * Lower the baud rate (but... slow...)
     * Chunk the serial transfer into 64 bytes at a time (although requesting
       the next chunk could potentially take mad time; investigate if pertinent)
-    * Use SPI - however, this'd require 1) reusing MISO and SCK (alright), or
+    * Use SPI - however, this'd require 1) reusing MISO and SCK (alright), and
       2) rerouting the breadboard (agh, I don't wannaaaaaaaa).
 */
 
