@@ -6,15 +6,15 @@
 
 #include "fastpins.hpp"
 
-template <class T>
-InputChannelSet<T>::InputChannelSet(
-    unsigned int numChannels, InputChannel<T>* channels[]) :
+template <class OutputType, class Contained>
+InputChannelSet<OutputType, Contained>::InputChannelSet(
+    unsigned int numChannels, Contained* channels[]) :
     _numChannels(numChannels), _inputChannels(channels) {}
 
-template <class T>
-T InputChannelSet<T>::input()
+template <class OutputType, class Contained>
+OutputType InputChannelSet<OutputType, Contained>::input()
 {
-    T n = 0;
+    OutputType n = 0;
     for (unsigned int i = 0; i < _numChannels; i++) {
         // Addition here will work the same as a binary or if the
         // channels only return non-overlapping bits.
@@ -23,44 +23,40 @@ T InputChannelSet<T>::input()
     return n;
 }
 
-template <class T>
-void InputChannelSet<T>::initInput()
+template <class OutputType, class Contained>
+void InputChannelSet<OutputType, Contained>::initInput()
 {
     for (unsigned int i = 0; i < _numChannels; i++) {
         _inputChannels[i]->initInput();
     }
 }
 
-template <class T>
-OutputChannelSet<T>::OutputChannelSet(
-    unsigned int numChannels, OutputChannel<T>* channels[]) :
+template <class OutputType, class Contained>
+OutputChannelSet<OutputType, Contained>::OutputChannelSet(
+    unsigned int numChannels, Contained* channels[]) :
     _numChannels(numChannels), _outputChannels(channels) {}
 
-template <class T>
-void OutputChannelSet<T>::output(T n)
+template <class OutputType, class Contained>
+void OutputChannelSet<OutputType, Contained>::output(OutputType n)
 {
     for (unsigned int i = 0; i < _numChannels; i++) {
         _outputChannels[i]->output(n);
     }
 }
 
-template <class T>
-void OutputChannelSet<T>::initOutput()
+template <class OutputType, class Contained>
+void OutputChannelSet<OutputType, Contained>::initOutput()
 {
     for (unsigned int i = 0; i < _numChannels; i++) {
         _outputChannels[i]->initOutput();
     }
 }
 
-template <class T>
-InputOutputChannelSet<T>::InputOutputChannelSet(
-    unsigned int numChannels, InputOutputChannel<T>* channels[]) :
-    // TODO: This... doesn't work. This cast from InputOutputChannel<T>** to
-    // InputChannel<T>** and OutputChannel<T>** results in the method lookups
-    // on the contained channels silently failing and exhibiting extremely
-    // strange behavior.
-    InputChannelSet<T>(numChannels, (InputChannel<T>**) channels),
-    OutputChannelSet<T>(numChannels, (OutputChannel<T>**) channels),
+template <class OutputType, class Contained>
+InputOutputChannelSet<OutputType, Contained>::InputOutputChannelSet(
+    unsigned int numChannels, Contained* channels[]) :
+    InputChannelSet<OutputType, Contained>(numChannels, channels),
+    OutputChannelSet<OutputType, Contained>(numChannels, channels),
     _numChannels(numChannels), _channels(channels) {}
 
 template <class T>
@@ -122,6 +118,7 @@ uint8_t InputOutput_Port::input()
 
 void InputOutput_Port::output(uint8_t n)
 {
+    Serial.println("Called InputOutput_Port::output.");
     n >>= _valueStartBit;
     n <<= _portStartBit;
     n &= _portMask;

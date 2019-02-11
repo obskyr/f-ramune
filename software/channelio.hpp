@@ -34,53 +34,44 @@ public:
 
 // Channel sets (multiple channels triggered via a single object)
 
-template <class T>
-class InputChannelSet : virtual public InputChannel<T>
+template <class OutputType, class Contained>
+class InputChannelSet : virtual public InputChannel<OutputType>
 {
 public:
     InputChannelSet(unsigned int numChannels,
-                    InputChannel<T>* channels[]);
-    T input();
+                    Contained* channels[]);
+    OutputType input();
     void initInput();
 private:
     unsigned int _numChannels;
-    InputChannel<T>** _inputChannels;
+    Contained** _inputChannels;
 };
 
-template <class T>
-class OutputChannelSet : virtual public OutputChannel<T>
+template <class OutputType, class Contained>
+class OutputChannelSet : virtual public OutputChannel<OutputType>
 {
 public:
     OutputChannelSet(unsigned int numChannels,
-                     OutputChannel<T>* channels[]);
-    virtual void output(T n);
+                     Contained* channels[]);
+    void output(OutputType n);
     void initOutput();
 private:
     unsigned int _numChannels;
-    OutputChannel<T>** _outputChannels;
+    Contained** _outputChannels;
 };
 
-template <class T>
-class InputOutputChannelSet : virtual public InputChannelSet<T>,
-                              virtual public OutputChannelSet<T>,
-                              virtual public InputOutputChannel<T>
+template <class OutputType, class Contained>
+class InputOutputChannelSet :
+    virtual public InputChannelSet<OutputType, Contained>,
+    virtual public OutputChannelSet<OutputType, Contained>,
+    virtual public InputOutputChannel<OutputType>
 {
 public:
     InputOutputChannelSet(unsigned int numChannels,
-                          InputOutputChannel<T>* channels[]);
-
-    // TODO: This isn't an actual solution - sure, upcasting to
-    // OutputChannelSet works now, but try initializing an OutputChannelSet
-    // with an array of InputOutputChannels and reality breaks down around you.
-    void output(T n) {
-        for (unsigned int i = 0; i < _numChannels; i++) {
-            _channels[i]->output(n);
-        }
-    }
-    
+                          Contained* channels[]);
 private:
     unsigned int _numChannels;
-    InputOutputChannel<T>** _channels;
+    Contained** _channels;
 };
 
 // Specific IO types

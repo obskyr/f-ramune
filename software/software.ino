@@ -28,9 +28,9 @@ InputOutput_Port* DATA_CHANNEL_PORTS[] = {
     &DATA_CHANNEL_PORT_1,
     &DATA_CHANNEL_PORT_2
 };
-InputOutputChannelSet<uint8_t> DATA_CHANNEL(
+InputOutputChannelSet<uint8_t, InputOutput_Port> DATA_CHANNEL(
     sizeof(DATA_CHANNEL_PORTS) / sizeof(*DATA_CHANNEL_PORTS),
-    (InputOutputChannel<uint8_t>**) DATA_CHANNEL_PORTS
+    DATA_CHANNEL_PORTS
 );
 
 // Buttons 'n' lights
@@ -48,13 +48,13 @@ MemoryChip memoryChip(&ADDRESS_CHANNEL, &DATA_CHANNEL,
                       PIN_MEMORY_CE, PIN_MEMORY_OE,
                       PIN_MEMORY_WE, PIN_MEMORY_POWER);
 
-InputOutputChannelSet<uint8_t> iocs(
+InputOutputChannelSet<uint8_t, InputOutput_Port> iocs(
     sizeof(DATA_CHANNEL_PORTS) / sizeof(*DATA_CHANNEL_PORTS),
-    (InputOutputChannel<uint8_t>**) DATA_CHANNEL_PORTS
+    DATA_CHANNEL_PORTS
 );
-OutputChannelSet<uint8_t> ocs(
+OutputChannelSet<uint8_t, InputOutput_Port> ocs(
     sizeof(DATA_CHANNEL_PORTS) / sizeof(*DATA_CHANNEL_PORTS),
-    (OutputChannel<uint8_t>**) DATA_CHANNEL_PORTS
+    DATA_CHANNEL_PORTS
 );
 
 void setup() {
@@ -62,13 +62,11 @@ void setup() {
     Serial.println("Starting!");
 
     Serial.println("Output directly from IOCS array:");
-    ((InputOutputChannel<uint8_t>**) DATA_CHANNEL_PORTS)[0]->output(0xA0);
-    Serial.println("Output directly from IOCS array cast to OCS array:");
-    ((OutputChannel<uint8_t>**) DATA_CHANNEL_PORTS)[0]->output(0xA1);
+    DATA_CHANNEL_PORTS[0]->output(0xA0);
     Serial.println("InputOutputChannelSet (containing IOC):");
     iocs.output(0xA5);
     Serial.println("Cast to OutputChannel:");
-    ((OutputChannelSet<uint8_t>*) &iocs)->output(0xA6);
+    ((OutputChannelSet<uint8_t, InputOutput_Port>*) &iocs)->output(0xA6);
     Serial.println("OutputChannel (containing IOC):");
     ocs.output(0xA7);
     Serial.println("Start test finished.");
