@@ -2,6 +2,7 @@
 #define CHANNELIO_HPP
 
 #include <stdint.h>
+#include "fastpins.hpp"
 
 // Base classes
 
@@ -37,35 +38,48 @@ template <class T>
 class InputChannelSet : virtual public InputChannel<T>
 {
 public:
-    InputChannelSet(unsigned int numChannels, const InputChannel<T>* channels[]);
+    InputChannelSet(unsigned int numChannels,
+                    InputChannel<T>* channels[]);
     T input();
     void initInput();
 private:
-    int _numChannels;
-    InputChannel<T>** _channels;
+    unsigned int _numChannels;
+    InputChannel<T>** _inputChannels;
 };
 
 template <class T>
 class OutputChannelSet : virtual public OutputChannel<T>
 {
 public:
-    OutputChannelSet(unsigned int numChannels, OutputChannel<T>* channels[]);
-    void output(T n);
+    OutputChannelSet(unsigned int numChannels,
+                     OutputChannel<T>* channels[]);
+    virtual void output(T n);
     void initOutput();
 private:
-    int _numChannels;
-    OutputChannel<T>** _channels;
+    unsigned int _numChannels;
+    OutputChannel<T>** _outputChannels;
 };
 
 template <class T>
-class InputOutputChannelSet : public InputChannelSet<T>,
-                              public OutputChannelSet<T>,
-                              public InputOutputChannel<T>
+class InputOutputChannelSet : virtual public InputChannelSet<T>,
+                              virtual public OutputChannelSet<T>,
+                              virtual public InputOutputChannel<T>
 {
 public:
-    InputOutputChannelSet(unsigned int numChannels, InputOutputChannel<T>* channels[]);
+    InputOutputChannelSet(unsigned int numChannels,
+                          InputOutputChannel<T>* channels[]);
+
+    // TODO: This isn't an actual solution - sure, upcasting to
+    // OutputChannelSet works now, but try initializing an OutputChannelSet
+    // with an array of InputOutputChannels and reality breaks down around you.
+    void output(T n) {
+        for (unsigned int i = 0; i < _numChannels; i++) {
+            _channels[i]->output(n);
+        }
+    }
+    
 private:
-    int _numChannels;
+    unsigned int _numChannels;
     InputOutputChannel<T>** _channels;
 };
 
@@ -80,26 +94,29 @@ public:
     void output(T n);
     void initOutput();
 private:
-    unsigned int _dataPin;
-    unsigned int _shiftPin;
-    unsigned int _latchPin;
+    PinPortInfo _dataPin;
+    PinPortInfo _shiftPin;
+    PinPortInfo _latchPin;
     unsigned int _numBits;
 };
 
 class InputOutput_Port : public InputOutputChannel<uint8_t>
 {
 public:
-    InputOutput_Port(uint8_t* inputRegister, uint8_t* outputRegister,
-                     uint8_t* directionRegister, unsigned int portStartBit,
-                     unsigned int valueStartBit, unsigned int numBits);
+    InputOutput_Port(volatile uint8_t* inputRegister,
+                     volatile uint8_t* outputRegister,
+                     volatile uint8_t* directionRegister,
+                     unsigned int portStartBit,
+                     unsigned int valueStartBit,
+                     unsigned int numBits);
     uint8_t input();
     void output(uint8_t n);
     void initInput();
     void initOutput();
 private:
-    uint8_t* _inputRegister;
-    uint8_t* _outputRegister;
-    uint8_t* _directionRegister;
+    volatile uint8_t* _inputRegister;
+    volatile uint8_t* _outputRegister;
+    volatile uint8_t* _directionRegister;
     unsigned int _portStartBit;
     unsigned int _valueStartBit;
     unsigned int _numBits;

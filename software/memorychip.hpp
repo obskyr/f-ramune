@@ -1,7 +1,9 @@
 #ifndef MEMORYCHIP_HPP
 #define MEMORYCHIP_HPP
 
+#include <stdint.h>
 #include "channelio.hpp"
+#include "fastpins.hpp"
 
 const uint16_t UNKNOWN_SIZE = 0;
 struct MemoryChipProperties
@@ -38,13 +40,13 @@ public:
 private:
     OutputChannel<uint16_t>* _addressChannel;
     InputOutputChannel<uint8_t>* _dataChannel;
-    unsigned int _cePin;
-    unsigned int _oePin;
-    unsigned int _wePin;
-    unsigned int _powerPin;
+    PinPortInfo _cePin;
+    PinPortInfo _oePin;
+    PinPortInfo _wePin;
+    PinPortInfo _powerPin;
 
     bool _propertiesAreKnown = false;
-    MemoryChipProperties _properties = {false, UNKNOWN_SIZE, false};
+    MemoryChipProperties _properties = {false, UNKNOWN_SIZE, false, false};
 
     bool _testAddress(uint16_t address, bool slow);
     bool _testNonVolatility();

@@ -1,12 +1,15 @@
+#include <stdint.h>
 #include "Arduino.h"
 
 #ifdef INCLUDING_CHANNELIO_TEMPLATES
 // Template implementations.
 
+#include "fastpins.hpp"
+
 template <class T>
 InputChannelSet<T>::InputChannelSet(
-    unsigned int numChannels, const InputChannel<T>* channels[]) :
-    _numChannels(numChannels), _channels(channels) {}
+    unsigned int numChannels, InputChannel<T>* channels[]) :
+    _numChannels(numChannels), _inputChannels(channels) {}
 
 template <class T>
 T InputChannelSet<T>::input()
@@ -15,30 +18,29 @@ T InputChannelSet<T>::input()
     for (unsigned int i = 0; i < _numChannels; i++) {
         // Addition here will work the same as a binary or if the
         // channels only return non-overlapping bits.
-        n += _channels[i]->input();
+        n += _inputChannels[i]->input();
     }
+    return n;
 }
 
 template <class T>
 void InputChannelSet<T>::initInput()
 {
     for (unsigned int i = 0; i < _numChannels; i++) {
-        _channels[i]->initInput();
+        _inputChannels[i]->initInput();
     }
 }
 
 template <class T>
 OutputChannelSet<T>::OutputChannelSet(
     unsigned int numChannels, OutputChannel<T>* channels[]) :
-    _numChannels(numChannels), _channels(channels) {}
+    _numChannels(numChannels), _outputChannels(channels) {}
 
 template <class T>
 void OutputChannelSet<T>::output(T n)
 {
     for (unsigned int i = 0; i < _numChannels; i++) {
-        // Addition here will work the same as a binary or if the
-        // channels only return non-overlapping bits.
-        _channels[i]->output(n);
+        _outputChannels[i]->output(n);
     }
 }
 
@@ -46,44 +48,48 @@ template <class T>
 void OutputChannelSet<T>::initOutput()
 {
     for (unsigned int i = 0; i < _numChannels; i++) {
-        _channels[i]->initOutput();
+        _outputChannels[i]->initOutput();
     }
 }
 
 template <class T>
 InputOutputChannelSet<T>::InputOutputChannelSet(
     unsigned int numChannels, InputOutputChannel<T>* channels[]) :
-    // Not sure this is the best way to do this - this sets a "channels"
-    // member thrice - but eh meh. It's not gonna run in a tight loop.
-    InputChannelSet<T>(numChannels, channels),
-    OutputChannelSet<T>(numChannels, channels),
+    // TODO: This... doesn't work. This cast from InputOutputChannel<T>** to
+    // InputChannel<T>** and OutputChannel<T>** results in the method lookups
+    // on the contained channels silently failing and exhibiting extremely
+    // strange behavior.
+    InputChannelSet<T>(numChannels, (InputChannel<T>**) channels),
+    OutputChannelSet<T>(numChannels, (OutputChannel<T>**) channels),
     _numChannels(numChannels), _channels(channels) {}
 
 template <class T>
 Output_ShiftRegister<T>::Output_ShiftRegister(
     unsigned int dataPin, unsigned int shiftPin,
     unsigned int latchPin, unsigned int numBits) :
-    _dataPin(dataPin), _shiftPin(shiftPin), _latchPin(latchPin),
-    _numBits(numBits) {}
+    _dataPin(pinToPortInfo(dataPin)), _shiftPin(pinToPortInfo(shiftPin)),
+    _latchPin(pinToPortInfo(latchPin)), _numBits(numBits) {}
 
 template <class T>
 void Output_ShiftRegister<T>::output(T n)
 {
+    SET_BITS_IN_PORT_LOW(_latchPin.out, _latchPin.bitMask);
+
     for (int bitNum = _numBits - 1; bitNum >= 0; bitNum--) {
-        digitalWrite(_dataPin, (n >> bitNum) & 1);
-        digitalWrite(_shiftPin, HIGH);
-        digitalWrite(_shiftPin, LOW);
+        SET_BIT_IN_PORT(_dataPin.out, _dataPin.bitNum, (n >> bitNum) & 1);
+        SET_BITS_IN_PORT_HIGH(_shiftPin.out, _shiftPin.bitMask);
+        SET_BITS_IN_PORT_LOW(_shiftPin.out, _shiftPin.bitMask);
     }
-    digitalWrite(_latchPin, HIGH);
-    digitalWrite(_latchPin, LOW);
+
+    SET_BITS_IN_PORT_HIGH(_latchPin.out, _latchPin.bitMask);
 }
 
 template <class T>
 void Output_ShiftRegister<T>::initOutput()
 {
-    pinMode(_dataPin, OUTPUT);
-    pinMode(_shiftPin, OUTPUT);
-    pinMode(_latchPin, OUTPUT);
+    pinMode(_dataPin.pin, OUTPUT);
+    pinMode(_shiftPin.pin, OUTPUT);
+    pinMode(_latchPin.pin, OUTPUT);
 }
 
 #else
@@ -91,14 +97,17 @@ void Output_ShiftRegister<T>::initOutput()
 #include "channelio.hpp"
 
 InputOutput_Port::InputOutput_Port(
-    uint8_t* inputRegister, uint8_t* outputRegister,
-    uint8_t* directionRegister, unsigned int portStartBit,
-    unsigned int valueStartBit, unsigned int numBits) :
-    _inputRegister(_inputRegister), _outputRegister(outputRegister),
+    volatile uint8_t* inputRegister,
+    volatile uint8_t* outputRegister,
+    volatile uint8_t* directionRegister,
+    unsigned int portStartBit,
+    unsigned int valueStartBit,
+    unsigned int numBits) :
+    _inputRegister(inputRegister), _outputRegister(outputRegister),
     _directionRegister(directionRegister), _portStartBit(portStartBit),
     _valueStartBit(valueStartBit), _numBits(numBits)
 {
-    for (int bitNum = 0; bitNum < _numBits; bitNum++) {
+    for (unsigned int bitNum = 0; bitNum < _numBits; bitNum++) {
         _portMask |= 1 << (_portStartBit + bitNum);
     }
 }
@@ -122,6 +131,7 @@ void InputOutput_Port::output(uint8_t n)
 void InputOutput_Port::initInput()
 {
     *_directionRegister &= ~_portMask;
+    *_outputRegister &= ~_portMask; // Turns off INPUT_PULLUP.
 }
 
 void InputOutput_Port::initOutput()

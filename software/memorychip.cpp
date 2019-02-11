@@ -1,20 +1,21 @@
 #include "memorychip.hpp"
 
-#include <Arduino.h>
+#include <stdint.h>
+#include "fastpins.hpp"
 
 // A little warning for you: the read and write functions don't verify
 // that the pins are in the correct mode - make sure to manage
 // switchToReadMode and switchToWriteMode properly.
 
 /*
-    TODO: Use micros() to measure how fast this runs. If it can read/write a
-    byte in under 69 microseconds, that means it can handle the target baud
-    rate of 115200. If not, do one or more of the following:
-    * Switch from digitalWrite to using ports (via a custom OutputChannel
-      subclass, for example)
+    TODO: Optimize this somehow... Even using ports, a byte write takes ~70 µs.
+    To match the target baud rate of 115200, a read/write needs to take less
+    than 69 µs. Possibilities to make this work:
     * Lower the baud rate (but... slow...)
     * Chunk the serial transfer into 64 bytes at a time (although requesting
       the next chunk could potentially take mad time; investigate if pertinent)
+    * Use SPI - however, this'd require 1) reusing MISO and SCK (alright), or
+      2) rerouting the breadboard (agh, I don't wannaaaaaaaa).
 */
 
 MemoryChip::MemoryChip(OutputChannel<uint16_t>* addressChannel,
@@ -22,7 +23,8 @@ MemoryChip::MemoryChip(OutputChannel<uint16_t>* addressChannel,
                        unsigned int cePin, unsigned int oePin,
                        unsigned int wePin, unsigned int powerPin) :
     _addressChannel(addressChannel), _dataChannel(dataChannel),
-    _cePin(cePin), _oePin(oePin), _wePin(wePin), _powerPin(powerPin) {}
+    _cePin(pinToPortInfo(cePin)), _oePin(pinToPortInfo(oePin)),
+    _wePin(pinToPortInfo(wePin)), _powerPin(pinToPortInfo(powerPin)) {}
 
 bool MemoryChip::getPropertiesAreKnown()
 {
@@ -42,7 +44,7 @@ void MemoryChip::setProperties(MemoryChipProperties properties)
 
 void MemoryChip::analyze()
 {
-    _properties = {false, 0, false};
+    _properties = {false, 0, false, false};
     _propertiesAreKnown = true;
 
     if (_testAddress(0, false)) {
@@ -54,7 +56,7 @@ void MemoryChip::analyze()
         return;
     }
 
-    for (_properties.size = 0x8000; _properties.size >>= 1; _properties.size > 0) {
+    for (_properties.size = 0x8000; _properties.size > 0; _properties.size >>= 1) {
         if (_testAddress(_properties.size - 1, _properties.isSlow)) {
             break;
         }
@@ -67,6 +69,8 @@ void MemoryChip::analyze()
 
 bool MemoryChip::_testAddress(uint16_t address, bool slow)
 {
+    (void) slow; // TODO: Implement EEPROM speed.
+
     uint8_t prevByte = readByte(0);
     uint8_t testByte = prevByte == 0xA5 ? 0x5A : 0xA5;
     writeByte(address, testByte);
@@ -97,10 +101,10 @@ bool MemoryChip::_testNonVolatility()
     delay(2500);
     powerOn();
     
-    _properties.isNonVolatile = true;
+    bool isNonVolatile = true;
     for (uint16_t address = 0; address < testLength; address++) {
         if (readByte(address) != 0x22) {
-            _properties.isNonVolatile = false;
+            isNonVolatile = false;
             break;
         }
     }
@@ -108,6 +112,8 @@ bool MemoryChip::_testNonVolatility()
     // It's like we were never there.
     writeBytes(0, prevBytes, testLength);
     delete[] prevBytes;
+
+    return isNonVolatile;
 }
 
 void MemoryChip::switchToReadMode()
@@ -119,11 +125,11 @@ uint8_t MemoryChip::readByte(uint16_t address)
 {
     // TODO: Implement slow mode here and there and everywhere.
     _addressChannel->output(address);
-    digitalWrite(_cePin, LOW);
-    digitalWrite(_oePin, LOW);
+    SET_BITS_IN_PORT_LOW(_cePin.out, _cePin.bitMask);
+    SET_BITS_IN_PORT_LOW(_oePin.out, _oePin.bitMask);
     uint8_t data = _dataChannel->input();
-    digitalWrite(_cePin, HIGH);
-    digitalWrite(_oePin, HIGH);
+    SET_BITS_IN_PORT_HIGH(_cePin.out, _cePin.bitMask);
+    SET_BITS_IN_PORT_HIGH(_oePin.out, _oePin.bitMask);
     return data;
 }
 
@@ -151,10 +157,10 @@ void MemoryChip::writeByte(uint16_t address, uint8_t data)
     _addressChannel->output(address);
     _dataChannel->output(data);
     // WE is active when CE is activated, so we're doing a CE-controlled write.
-    digitalWrite(_wePin, LOW);
-    digitalWrite(_cePin, LOW);
-    digitalWrite(_cePin, HIGH);
-    digitalWrite(_wePin, HIGH);
+    SET_BITS_IN_PORT_LOW(_wePin.out, _wePin.bitMask);
+    SET_BITS_IN_PORT_LOW(_cePin.out, _cePin.bitMask);
+    SET_BITS_IN_PORT_HIGH(_cePin.out, _wePin.bitMask);
+    SET_BITS_IN_PORT_HIGH(_wePin.out, _wePin.bitMask);
 }
 
 size_t MemoryChip::writeBytes(uint16_t address, uint8_t* source, size_t length)
