@@ -29,7 +29,7 @@ version=1
 version=1
 LibDir=libraries
 [eeschema/libraries]
-LibName1=libraries/fram-tester
+LibName1=libraries/f-ramune
 LibName2=libraries/teensy_library/teensy
 LibName3=power
 LibName4=device

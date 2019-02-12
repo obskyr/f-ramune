@@ -1,5 +1,6 @@
 EESchema Schematic File Version 2
-LIBS:framtest
+LIBS:f-ramune
+LIBS:teensy
 LIBS:power
 LIBS:device
 LIBS:switches
@@ -32,8 +33,6 @@ LIBS:opto
 LIBS:atmel
 LIBS:contrib
 LIBS:valves
-LIBS:teensy
-LIBS:framtest-cache
 EELAYER 25 0
 EELAYER END
 $Descr A4 11693 8268
@@ -78,7 +77,7 @@ U 1 1 5C5169CB
 P 2950 2650
 F 0 "U1" H 2950 4150 60  0000 C CNN
 F 1 "Teensy3.2" H 2950 1150 60  0000 C CNN
-F 2 "" H 2950 1850 60  0000 C CNN
+F 2 "Housings_DIP:DIP-28_W7.62mm_Socket_LongPads" H 2950 1050 60  0001 C CNN
 F 3 "" H 2950 1850 60  0000 C CNN
 	1    2950 2650
 	1    0    0    -1  
