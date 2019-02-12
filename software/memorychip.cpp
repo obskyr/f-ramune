@@ -3,20 +3,9 @@
 #include <stdint.h>
 #include "fastpins.hpp"
 
-// A little warning for you: the read and write functions don't verify
-// that the pins are in the correct mode - make sure to manage
+// A little warning for you: to maximize speed, the read and write functions
+// don't verify that the pins are in the correct mode - make sure to manage
 // switchToReadMode and switchToWriteMode properly.
-
-/*
-    TODO: Optimize this somehow... Even using ports, a byte write takes a
-    minimum of ~72 µs. To match the target baud rate of 115200, a read/write
-    needs to take less than 69 µs. Possibilities to make this work:
-    * Lower the baud rate (but... slow...)
-    * Chunk the serial transfer into 64 bytes at a time (although requesting
-      the next chunk could potentially take mad time; investigate if pertinent)
-    * Use SPI - however, this'd require 1) reusing MISO and SCK (alright), and
-      2) rerouting the breadboard (agh, I don't wannaaaaaaaa).
-*/
 
 MemoryChip::MemoryChip(OutputChannel<uint16_t>* addressChannel,
                        InputOutputChannel<uint8_t>* dataChannel,
@@ -154,6 +143,15 @@ void MemoryChip::switchToWriteMode()
 
 void MemoryChip::writeByte(uint16_t address, uint8_t data)
 {
+    // MemoryChip::writeByte benchmarks with different _addressChannel types
+    // (16 MHz ATmega328P, _dataChannel is always InputOutput_Port):
+    // * digitalWrite: 250+ µs
+    // * Output_ShiftRegister (bit-banging ports): ~112 µs
+    // * Output_ShiftRegister (with hard-coded ports): ~77 µs
+    // * Output_SpiShiftRegister: ~27 µs
+    // Holy heck! SPI brought it down like crazy! That is way under the
+    // target <69 µs that a serial baud rate of 115200 requires!
+
     _addressChannel->output(address);
     _dataChannel->output(data);
     // WE is active when CE is activated, so we're doing a CE-controlled write.

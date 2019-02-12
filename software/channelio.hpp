@@ -2,6 +2,7 @@
 #define CHANNELIO_HPP
 
 #include <stdint.h>
+#include <SPI.h>
 #include "fastpins.hpp"
 
 // Base classes
@@ -89,6 +90,28 @@ private:
     PinPortInfo _shiftPin;
     PinPortInfo _latchPin;
     unsigned int _numBits;
+};
+
+template <class T>
+class Output_Spi : public OutputChannel<T>
+{
+public:
+    Output_Spi(uint32_t frequency, uint8_t mode);
+    virtual void output(T n);
+    virtual void initOutput();
+private:
+    SPISettings _settings;
+};
+
+template <class T>
+class Output_SpiShiftRegister : public Output_Spi<T>
+{
+public:
+    Output_SpiShiftRegister(uint32_t frequency, uint8_t spiMode, uint8_t latchPin);
+    void output(T n);
+    void initOutput();
+private:
+    PinPortInfo _latchPin;
 };
 
 class InputOutput_Port : public InputOutputChannel<uint8_t>

@@ -1,5 +1,6 @@
 #include <stdint.h>
-#include "Arduino.h"
+#include <Arduino.h>
+#include <SPI.h>
 
 #ifdef INCLUDING_CHANNELIO_TEMPLATES
 // Template implementations.
@@ -86,6 +87,47 @@ void Output_ShiftRegister<T>::initOutput()
     pinMode(_dataPin.pin, OUTPUT);
     pinMode(_shiftPin.pin, OUTPUT);
     pinMode(_latchPin.pin, OUTPUT);
+}
+
+template <class T>
+Output_Spi<T>::Output_Spi(uint32_t frequency, uint8_t mode) :
+    _settings(frequency, MSBFIRST, mode) {}
+
+template <class T>
+void Output_Spi<T>::output(T n)
+{
+    SPI.beginTransaction(_settings);
+    for (int byteStart = (sizeof(T) - 1) * 8; byteStart >= 0; byteStart -= 8) {
+        SPI.transfer(n >> byteStart);
+    }
+    SPI.endTransaction();
+}
+
+template <class T>
+void Output_Spi<T>::initOutput()
+{
+    SPI.begin(); // Sets pinMode(SS, OUTPUT) internally.
+}
+
+template <class T>
+Output_SpiShiftRegister<T>::Output_SpiShiftRegister(
+    uint32_t frequency, uint8_t spiMode, uint8_t latchPin) :
+    Output_Spi<T>(frequency, spiMode), _latchPin(pinToPortInfo(latchPin)) {}
+
+template <class T>
+void Output_SpiShiftRegister<T>::output(T n)
+{
+    SET_BITS_IN_PORT_LOW(_latchPin.out, _latchPin.bitMask);
+    Output_Spi<T>::output(n);
+    SET_BITS_IN_PORT_HIGH(_latchPin.out, _latchPin.bitMask);
+}
+
+template <class T>
+void Output_SpiShiftRegister<T>::initOutput()
+{
+    Output_Spi<T>::initOutput();
+    pinMode(_latchPin.pin, OUTPUT);
+    SET_BITS_IN_PORT_HIGH(_latchPin.out, _latchPin.bitMask);
 }
 
 #else

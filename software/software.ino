@@ -12,12 +12,11 @@
 #define PIN_MEMORY_WE    2
 
 // Memory chip address channel
-Output_ShiftRegister<uint16_t> ADDRESS_CHANNEL(
-     8, // Bit on pin 8,
-    10, // shift on pin 10,
-     9, // latch on pin 9,
-    15  // and 15 bits.
-);
+// Latch pin: 10 (SS - doesn't need to be SS, but might as well be)
+// When SPI is active, don't forget: MISO's direction is overridden to be an
+// input, and SS has to stay configured as an output to stay master!
+// Within those config constraints, though, they can be used for unrelated IO.
+Output_SpiShiftRegister<uint16_t> ADDRESS_CHANNEL(20000000, SPI_MODE0, 10);
 
 // Memory chip data channel
 // 5 bits starting at bit #3, via port D
