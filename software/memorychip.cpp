@@ -10,10 +10,41 @@
 MemoryChip::MemoryChip(OutputChannel<uint16_t>* addressChannel,
                        InputOutputChannel<uint8_t>* dataChannel,
                        unsigned int cePin, unsigned int oePin,
-                       unsigned int wePin, unsigned int powerPin) :
+                       unsigned int wePin, unsigned int powerPin,
+                       uint8_t powerPinOnState) :
     _addressChannel(addressChannel), _dataChannel(dataChannel),
     _cePin(pinToPortInfo(cePin)), _oePin(pinToPortInfo(oePin)),
-    _wePin(pinToPortInfo(wePin)), _powerPin(pinToPortInfo(powerPin)) {}
+    _wePin(pinToPortInfo(wePin)), _powerPin(pinToPortInfo(powerPin)),
+    _powerPinOnState(powerPinOnState) {}
+
+void MemoryChip::initPins()
+{
+    _addressChannel->initOutput();
+    switchToReadMode();
+    pinMode(_cePin.pin, OUTPUT);
+    pinMode(_oePin.pin, OUTPUT);
+    pinMode(_wePin.pin, OUTPUT);
+    pinMode(_powerPin.pin, OUTPUT);
+    powerOn();
+}
+
+void MemoryChip::powerOff()
+{
+    if (_powerPinOnState == HIGH) {
+        SET_BITS_IN_PORT_LOW(_powerPin.out, _powerPin.bitMask);
+    } else {
+        SET_BITS_IN_PORT_HIGH(_powerPin.out, _powerPin.bitMask);
+    }
+}
+
+void MemoryChip::powerOn()
+{
+    if (_powerPinOnState == HIGH) {
+        SET_BITS_IN_PORT_HIGH(_powerPin.out, _powerPin.bitMask);
+    } else {
+        SET_BITS_IN_PORT_LOW(_powerPin.out, _powerPin.bitMask);
+    }
+}
 
 bool MemoryChip::getPropertiesAreKnown()
 {
@@ -157,7 +188,7 @@ void MemoryChip::writeByte(uint16_t address, uint8_t data)
     // WE is active when CE is activated, so we're doing a CE-controlled write.
     SET_BITS_IN_PORT_LOW(_wePin.out, _wePin.bitMask);
     SET_BITS_IN_PORT_LOW(_cePin.out, _cePin.bitMask);
-    SET_BITS_IN_PORT_HIGH(_cePin.out, _wePin.bitMask);
+    SET_BITS_IN_PORT_HIGH(_cePin.out, _cePin.bitMask);
     SET_BITS_IN_PORT_HIGH(_wePin.out, _wePin.bitMask);
 }
 

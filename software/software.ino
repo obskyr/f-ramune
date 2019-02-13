@@ -1,3 +1,4 @@
+#include <Bounce2.h>
 #include "channelio.hpp"
 #include "memorychip.hpp"
 
@@ -7,6 +8,7 @@
 
 // Memory chip control pins
 #define PIN_MEMORY_POWER A3
+#define PIN_MEMORY_POWER_ACTIVE_STATE HIGH
 #define PIN_MEMORY_CE    A4
 #define PIN_MEMORY_OE    A5
 #define PIN_MEMORY_WE    2
@@ -19,10 +21,12 @@
 Output_SpiShiftRegister<uint16_t> ADDRESS_CHANNEL(20000000, SPI_MODE0, 10);
 
 // Memory chip data channel
+// Note that INPUT_PULLUP here is important - otherwise, reading when there's
+// no chip connected will read back what was just written (ghooost values).
 // 5 bits starting at bit #3, via port D
-InputOutput_Port DATA_CHANNEL_PORT_1(&PIND, &PORTD, &DDRD, 3, 3, 5);
+InputOutput_Port DATA_CHANNEL_PORT_1(INPUT_PULLUP, &PIND, &PORTD, &DDRD, 3, 3, 5);
 // 3 bits starting at bit #0, via port C
-InputOutput_Port DATA_CHANNEL_PORT_2(&PINC, &PORTC, &DDRC, 0, 0, 3);
+InputOutput_Port DATA_CHANNEL_PORT_2(INPUT_PULLUP, &PINC, &PORTC, &DDRC, 0, 0, 3);
 InputOutput_Port* DATA_CHANNEL_PORTS[] = {
     &DATA_CHANNEL_PORT_1,
     &DATA_CHANNEL_PORT_2
@@ -33,9 +37,9 @@ InputOutputChannelSet<uint8_t, InputOutput_Port> DATA_CHANNEL(
 );
 
 // Buttons 'n' lights
-#define PIN_TEST_BUTTON 13
-#define PIN_HAPPY_LED   12
-#define PIN_FROWNY_LED  11
+#define PIN_TEST_BUTTON 12
+#define PIN_HAPPY_LED    9
+#define PIN_FROWNY_LED   8
 
 #else
 
@@ -44,30 +48,134 @@ InputOutputChannelSet<uint8_t, InputOutput_Port> DATA_CHANNEL(
 #endif
 
 MemoryChip memoryChip(&ADDRESS_CHANNEL, &DATA_CHANNEL,
-                      PIN_MEMORY_CE, PIN_MEMORY_OE,
-                      PIN_MEMORY_WE, PIN_MEMORY_POWER);
+                      PIN_MEMORY_CE, PIN_MEMORY_OE, PIN_MEMORY_WE,
+                      PIN_MEMORY_POWER, PIN_MEMORY_POWER_ACTIVE_STATE);
 
-void setup() {
-    Serial.begin(9600);
-    Serial.println("Starting!");
-    ADDRESS_CHANNEL.initOutput();
-    memoryChip.switchToWriteMode();
+Bounce testButton = Bounce();
 
-    unsigned long t1 = millis();
-    for (unsigned int x = 0; x < 10000; x++)  {
-        memoryChip.writeByte(x, 0xA5);
+uint16_t addresses[] = {0x0000, 0x0123, 0x0ABC, 0x0DEF};
+uint8_t testBytes[] = {0x00, 0x01, 0x02, 0x03};
+size_t numTests = sizeof(addresses) / sizeof(*addresses);
+
+void printPaddedHex(unsigned int n, unsigned int digits)
+{
+    unsigned int nCheck = n;
+    do {
+        if (digits) {
+            digits--;
+        } else {
+            break;
+        }
+        nCheck >>= 4;
+    } while (nCheck);
+    for (unsigned int i = 0; i < digits; i++) {
+        Serial.print("0");
     }
-    unsigned long t2 = millis();
-    Serial.print("Microseconds per write (target: <69): ");
-    Serial.println(((t2 - t1) * 1000) / 10000.0);
+    Serial.print(n, HEX);
 }
 
-int i = 0;
-uint8_t nums[] = {0b10000001, 0, 0b00000001, 0b10000000};
+void testWrite(uint16_t address, uint8_t data)
+{
+    Serial.print("Write to 0x");
+    printPaddedHex(address, 4);
+    Serial.print(": 0x");
+    printPaddedHex(data, 2);
+    Serial.println();
+    memoryChip.writeByte(address, data);
+}
 
-void loop() {
-    i += 1;
-    i %= sizeof(nums) / sizeof(*nums);
-    ADDRESS_CHANNEL.output(nums[i]);
-    delay(700);
+uint8_t testRead(const char* messageStart, uint16_t address)
+{
+    uint8_t data = memoryChip.readByte(address);
+    Serial.print(messageStart);
+    printPaddedHex(address, 4);
+    Serial.print(": 0x");
+    printPaddedHex(data, 2);
+    Serial.println();
+    return data;
+}
+
+uint8_t testRead(uint16_t address)
+{
+    return testRead("Read from 0x", address);
+}
+
+void setup()
+{
+    testButton.attach(PIN_TEST_BUTTON, INPUT);
+    testButton.interval(25);
+    pinMode(PIN_HAPPY_LED, OUTPUT);
+    pinMode(PIN_FROWNY_LED, OUTPUT);
+
+    Serial.begin(9600);
+    Serial.println("Starting!");
+    memoryChip.initPins();
+
+    for (size_t i = 0; i < numTests; i++) {
+        testRead("Byte left at 0x", addresses[i]);
+    }
+
+    memoryChip.switchToWriteMode();
+    for (size_t i = 0; i < numTests; i++) {
+        testWrite(addresses[i], testBytes[i]);
+    }
+
+    memoryChip.switchToReadMode(); 
+}
+
+#define UNKNOWN_STATE 0
+#define ALWAYS_GOOD 1
+#define BAD_JUST_NOW 2
+#define PREVIOUSLY_BAD 3
+
+int prevState = UNKNOWN_STATE;
+int curState = UNKNOWN_STATE; 
+
+void loop()
+{
+    testButton.update();
+    if (testButton.rose()) {
+        digitalWrite(PIN_HAPPY_LED, LOW);
+        digitalWrite(PIN_FROWNY_LED, LOW);
+    }
+    if (!testButton.fell()) {
+        return;
+    }
+
+    bool allOnTheUpAndUp = true;
+    for (size_t i = 0; i < numTests; i++) {
+        uint8_t readByte = testRead(addresses[i]);
+        if (readByte != testBytes[i]) {
+            allOnTheUpAndUp = false;
+        }
+    }
+    
+    if (!allOnTheUpAndUp) {
+        curState = BAD_JUST_NOW;
+    } else if (prevState != BAD_JUST_NOW && prevState != PREVIOUSLY_BAD) {
+        curState = ALWAYS_GOOD;
+    } else {
+        curState = PREVIOUSLY_BAD;
+    }
+
+    switch (curState) {
+        case UNKNOWN_STATE:
+            digitalWrite(PIN_HAPPY_LED, LOW);
+            digitalWrite(PIN_FROWNY_LED, LOW);
+            break;
+        case ALWAYS_GOOD:
+            digitalWrite(PIN_HAPPY_LED, HIGH);
+            digitalWrite(PIN_FROWNY_LED, LOW);
+            break;
+        case BAD_JUST_NOW:
+            digitalWrite(PIN_HAPPY_LED, LOW);
+            digitalWrite(PIN_FROWNY_LED, HIGH);
+            break;
+        case PREVIOUSLY_BAD:
+            digitalWrite(PIN_HAPPY_LED, HIGH);
+            digitalWrite(PIN_FROWNY_LED, HIGH);
+            break;
+    }
+
+    prevState = curState;
 }

@@ -20,15 +20,17 @@ public:
     MemoryChip(OutputChannel<uint16_t>* addressChannel,
                InputOutputChannel<uint8_t>* dataChannel,
                unsigned int cePin, unsigned int oePin,
-               unsigned int wePin, unsigned int powerPin);
+               unsigned int wePin, unsigned int powerPin,
+               uint8_t powerPinOnState);
+    void initPins();
+
+    void powerOff();
+    void powerOn();
 
     bool getPropertiesAreKnown();
     MemoryChipProperties getProperties();
     void setProperties(MemoryChipProperties properties);
     void analyze();
-
-    void powerOff();
-    void powerOn();
     
     void switchToReadMode();
     uint8_t readByte(uint16_t address);
@@ -44,6 +46,7 @@ private:
     PinPortInfo _oePin;
     PinPortInfo _wePin;
     PinPortInfo _powerPin;
+    uint8_t _powerPinOnState;
 
     bool _propertiesAreKnown = false;
     MemoryChipProperties _properties = {false, UNKNOWN_SIZE, false, false};

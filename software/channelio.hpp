@@ -117,7 +117,8 @@ private:
 class InputOutput_Port : public InputOutputChannel<uint8_t>
 {
 public:
-    InputOutput_Port(volatile uint8_t* inputRegister,
+    InputOutput_Port(uint8_t inputMode,
+                     volatile uint8_t* inputRegister,
                      volatile uint8_t* outputRegister,
                      volatile uint8_t* directionRegister,
                      unsigned int portStartBit,
@@ -128,6 +129,7 @@ public:
     void initInput();
     void initOutput();
 private:
+    uint8_t _inputMode;
     volatile uint8_t* _inputRegister;
     volatile uint8_t* _outputRegister;
     volatile uint8_t* _directionRegister;

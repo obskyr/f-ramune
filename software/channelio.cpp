@@ -135,12 +135,14 @@ void Output_SpiShiftRegister<T>::initOutput()
 #include "channelio.hpp"
 
 InputOutput_Port::InputOutput_Port(
+    uint8_t inputMode,
     volatile uint8_t* inputRegister,
     volatile uint8_t* outputRegister,
     volatile uint8_t* directionRegister,
     unsigned int portStartBit,
     unsigned int valueStartBit,
     unsigned int numBits) :
+    _inputMode(inputMode),
     _inputRegister(inputRegister), _outputRegister(outputRegister),
     _directionRegister(directionRegister), _portStartBit(portStartBit),
     _valueStartBit(valueStartBit), _numBits(numBits)
@@ -169,7 +171,11 @@ void InputOutput_Port::output(uint8_t n)
 void InputOutput_Port::initInput()
 {
     *_directionRegister &= ~_portMask;
-    *_outputRegister &= ~_portMask; // Turns off INPUT_PULLUP.
+    if (_inputMode == INPUT_PULLUP) {
+        *_outputRegister |= _portMask; // Turns on INPUT_PULLUP.
+    } else {
+        *_outputRegister &= ~_portMask; // Turns off INPUT_PULLUP.
+    }
 }
 
 void InputOutput_Port::initOutput()
