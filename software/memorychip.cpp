@@ -22,12 +22,14 @@ void MemoryChip::initPins()
     _addressChannel->initOutput();
     switchToReadMode();
 
-    pinMode(_cePin.pin, OUTPUT);
+    // It's important that these pins immediately
+    // start high, so the chip isn't enabled!
     SET_BITS_IN_PORT_HIGH(_cePin.out, _cePin.bitMask);
-    pinMode(_oePin.pin, OUTPUT);
+    pinMode(_cePin.pin, OUTPUT);
     SET_BITS_IN_PORT_HIGH(_oePin.out, _oePin.bitMask);
-    pinMode(_wePin.pin, OUTPUT);
+    pinMode(_oePin.pin, OUTPUT);
     SET_BITS_IN_PORT_HIGH(_wePin.out, _wePin.bitMask);
+    pinMode(_wePin.pin, OUTPUT);
 
     pinMode(_powerPin.pin, OUTPUT);
     powerOn();
