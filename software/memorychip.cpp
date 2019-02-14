@@ -21,9 +21,14 @@ void MemoryChip::initPins()
 {
     _addressChannel->initOutput();
     switchToReadMode();
+
     pinMode(_cePin.pin, OUTPUT);
+    SET_BITS_IN_PORT_HIGH(_cePin.out, _cePin.bitMask);
     pinMode(_oePin.pin, OUTPUT);
+    SET_BITS_IN_PORT_HIGH(_oePin.out, _oePin.bitMask);
     pinMode(_wePin.pin, OUTPUT);
+    SET_BITS_IN_PORT_HIGH(_wePin.out, _wePin.bitMask);
+
     pinMode(_powerPin.pin, OUTPUT);
     powerOn();
 }

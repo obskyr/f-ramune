@@ -110,17 +110,6 @@ void setup()
     Serial.begin(9600);
     Serial.println("Starting!");
     memoryChip.initPins();
-
-    for (size_t i = 0; i < numTests; i++) {
-        testRead("Byte left at 0x", addresses[i]);
-    }
-
-    memoryChip.switchToWriteMode();
-    for (size_t i = 0; i < numTests; i++) {
-        testWrite(addresses[i], testBytes[i]);
-    }
-
-    memoryChip.switchToReadMode(); 
 }
 
 #define UNKNOWN_STATE 0
@@ -129,7 +118,33 @@ void setup()
 #define PREVIOUSLY_BAD 3
 
 int prevState = UNKNOWN_STATE;
-int curState = UNKNOWN_STATE; 
+int curState = UNKNOWN_STATE;
+
+bool buttonHeld = false;
+unsigned long int buttonHeldStart = 0;
+bool didWriteThisButtonPress = false;
+
+void updateLeds(int state)
+{
+    switch (state) {
+        case UNKNOWN_STATE:
+            digitalWrite(PIN_HAPPY_LED, LOW);
+            digitalWrite(PIN_FROWNY_LED, LOW);
+            break;
+        case ALWAYS_GOOD:
+            digitalWrite(PIN_HAPPY_LED, HIGH);
+            digitalWrite(PIN_FROWNY_LED, LOW);
+            break;
+        case BAD_JUST_NOW:
+            digitalWrite(PIN_HAPPY_LED, LOW);
+            digitalWrite(PIN_FROWNY_LED, HIGH);
+            break;
+        case PREVIOUSLY_BAD:
+            digitalWrite(PIN_HAPPY_LED, HIGH);
+            digitalWrite(PIN_FROWNY_LED, HIGH);
+            break;
+    }
+}
 
 void loop()
 {
@@ -137,8 +152,25 @@ void loop()
     if (testButton.rose()) {
         digitalWrite(PIN_HAPPY_LED, LOW);
         digitalWrite(PIN_FROWNY_LED, LOW);
+        buttonHeld = true;
+        buttonHeldStart = millis();
     }
     if (!testButton.fell()) {
+        if (buttonHeld && !didWriteThisButtonPress && 
+                millis() - buttonHeldStart >= 1000) {
+            memoryChip.switchToWriteMode();
+            for (size_t i = 0; i < numTests; i++) {
+                testWrite(addresses[i], testBytes[i]);
+            }
+            memoryChip.switchToReadMode();
+            updateLeds(curState);
+            didWriteThisButtonPress = true;
+        }
+        return;
+    }
+    buttonHeld = false;
+    if (didWriteThisButtonPress) {
+        didWriteThisButtonPress = false;
         return;
     }
 
@@ -158,24 +190,7 @@ void loop()
         curState = PREVIOUSLY_BAD;
     }
 
-    switch (curState) {
-        case UNKNOWN_STATE:
-            digitalWrite(PIN_HAPPY_LED, LOW);
-            digitalWrite(PIN_FROWNY_LED, LOW);
-            break;
-        case ALWAYS_GOOD:
-            digitalWrite(PIN_HAPPY_LED, HIGH);
-            digitalWrite(PIN_FROWNY_LED, LOW);
-            break;
-        case BAD_JUST_NOW:
-            digitalWrite(PIN_HAPPY_LED, LOW);
-            digitalWrite(PIN_FROWNY_LED, HIGH);
-            break;
-        case PREVIOUSLY_BAD:
-            digitalWrite(PIN_HAPPY_LED, HIGH);
-            digitalWrite(PIN_FROWNY_LED, HIGH);
-            break;
-    }
+    updateLeds(curState);
 
     prevState = curState;
 }
