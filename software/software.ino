@@ -122,7 +122,9 @@ int curState = UNKNOWN_STATE;
 
 bool buttonHeld = false;
 unsigned long int buttonHeldStart = 0;
-bool didWriteThisButtonPress = false;
+bool blinkState = LOW;
+unsigned long int lastBlink = 0;
+bool doWriteThisButtonPress = false;
 
 void updateLeds(int state)
 {
@@ -148,49 +150,57 @@ void updateLeds(int state)
 
 void loop()
 {
+    unsigned long int curMillis = millis();
+
     testButton.update();
     if (testButton.rose()) {
         digitalWrite(PIN_HAPPY_LED, LOW);
         digitalWrite(PIN_FROWNY_LED, LOW);
         buttonHeld = true;
-        buttonHeldStart = millis();
+        buttonHeldStart = curMillis;
     }
     if (!testButton.fell()) {
-        if (buttonHeld && !didWriteThisButtonPress && 
-                millis() - buttonHeldStart >= 1000) {
-            memoryChip.switchToWriteMode();
-            for (size_t i = 0; i < numTests; i++) {
-                testWrite(addresses[i], testBytes[i]);
+        if (buttonHeld && curMillis - buttonHeldStart >= 1000) {
+            if (!doWriteThisButtonPress || curMillis - lastBlink >= 500) {
+                blinkState = !blinkState;
+                digitalWrite(PIN_HAPPY_LED, blinkState);
+                digitalWrite(PIN_FROWNY_LED, blinkState);
+                lastBlink = curMillis;
             }
-            memoryChip.switchToReadMode();
-            updateLeds(curState);
-            didWriteThisButtonPress = true;
+            doWriteThisButtonPress = true;
         }
         return;
     }
     buttonHeld = false;
-    if (didWriteThisButtonPress) {
-        didWriteThisButtonPress = false;
-        return;
-    }
+    blinkState = LOW;
 
-    bool allOnTheUpAndUp = true;
-    for (size_t i = 0; i < numTests; i++) {
-        uint8_t readByte = testRead(addresses[i]);
-        if (readByte != testBytes[i]) {
-            allOnTheUpAndUp = false;
+    if (doWriteThisButtonPress) {
+        memoryChip.switchToWriteMode();
+        for (size_t i = 0; i < numTests; i++) {
+            testWrite(addresses[i], testBytes[i]);
         }
-    }
-    
-    if (!allOnTheUpAndUp) {
-        curState = BAD_JUST_NOW;
-    } else if (prevState != BAD_JUST_NOW && prevState != PREVIOUSLY_BAD) {
-        curState = ALWAYS_GOOD;
+        memoryChip.switchToReadMode();
+        doWriteThisButtonPress = false;
+        curState = UNKNOWN_STATE;
     } else {
-        curState = PREVIOUSLY_BAD;
-    }
+        bool allOnTheUpAndUp = true;
+        for (size_t i = 0; i < numTests; i++) {
+            uint8_t readByte = testRead(addresses[i]);
+            if (readByte != testBytes[i]) {
+                allOnTheUpAndUp = false;
+            }
+        }
+        
+        if (!allOnTheUpAndUp) {
+            curState = BAD_JUST_NOW;
+        } else if (prevState != BAD_JUST_NOW && prevState != PREVIOUSLY_BAD) {
+            curState = ALWAYS_GOOD;
+        } else {
+            curState = PREVIOUSLY_BAD;
+        }
 
-    updateLeds(curState);
+    }
 
     prevState = curState;
+    updateLeds(curState);
 }
