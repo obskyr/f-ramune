@@ -48,6 +48,8 @@ private:
     PinPortInfo _powerPin;
     uint8_t _powerPinOnState;
 
+    bool _inWriteMode = false;
+
     bool _propertiesAreKnown = false;
     MemoryChipProperties _properties = {false, UNKNOWN_SIZE, false, false};
 

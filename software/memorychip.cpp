@@ -38,10 +38,47 @@ void MemoryChip::initPins()
 void MemoryChip::powerOff()
 {
     if (_powerPinOnState == HIGH) {
+        // If the power is on high, that means a low-side switching circuit
+        // is used, which means ground is being cut off. When ground is cut
+        // off, to cut power to the chip, all other lines need to be high.
+        _addressChannel->output(0xFFFF);
+        if (_inWriteMode) {
+            _dataChannel->output(0xFF);
+        }
         SET_BITS_IN_PORT_LOW(_powerPin.out, _powerPin.bitMask);
     } else {
+        // If the power is on high, that means a high-side switching circuit
+        // is used, which means V+ is being cut off. When V+ is cut
+        // off, to cut power to the chip, all other lines need to be low.
+        _addressChannel->output(0);
+        if (_inWriteMode) {
+            _dataChannel->output(0);
+        }
+        SET_BITS_IN_PORT_LOW(_oePin.out, _oePin.bitMask);
+        SET_BITS_IN_PORT_LOW(_wePin.out, _wePin.bitMask);
         SET_BITS_IN_PORT_HIGH(_powerPin.out, _powerPin.bitMask);
+        // CE needs to go low last, since asserting CE low activates the chip.
+        // By eliminating the last source of positive voltage with CE, we
+        // minimize the risk of accidentally writing to the chip on power off.
+        SET_BITS_IN_PORT_LOW(_cePin.out, _cePin.bitMask);
     }
+    /*
+        This delay is to accommodate MOSFET switching time.
+        
+        This generous value was chosen based on a supply voltage of 4.5 V,
+        a max gate charge (Qg) of 75 nC, a 100 Ω series gate resistor
+        (which limits current to 4.5 V / 100 Ω = 45 mA),
+        and a max gate threshold (Vgs(th)) of 3 V.
+        The minimum charging current then is (4.5 V - 3 V) / 100 Ω = 15 mA,
+        which makes the max switch time 75 nC / 15 mA = 5 µs.
+        These values are pretty unrealistic - the IRL520N in f-ramune's
+        schematic has a Qg of 20 nC and a max Vgs(th) of 2 V, which given
+        the other numbers really only requires 0.8 µs. Leeway! ☆
+
+        Pretty sure powerOff and powerOn won't have to run in a tight
+        loop, but if they ever do, this might need to be looked at.
+    */
+    delayMicroseconds(5);
 }
 
 void MemoryChip::powerOn()
@@ -49,8 +86,14 @@ void MemoryChip::powerOn()
     if (_powerPinOnState == HIGH) {
         SET_BITS_IN_PORT_HIGH(_powerPin.out, _powerPin.bitMask);
     } else {
+        // For the same reason outlined in powerOff,
+        // CE needs to go high before the V+ line does.
+        SET_BITS_IN_PORT_HIGH(_cePin.out, _cePin.bitMask);
         SET_BITS_IN_PORT_LOW(_powerPin.out, _powerPin.bitMask);
+        SET_BITS_IN_PORT_HIGH(_oePin.out, _oePin.bitMask);
+        SET_BITS_IN_PORT_HIGH(_wePin.out, _wePin.bitMask);
     }
+    delayMicroseconds(5);
 }
 
 bool MemoryChip::getPropertiesAreKnown()
@@ -145,6 +188,7 @@ bool MemoryChip::_testNonVolatility()
 
 void MemoryChip::switchToReadMode()
 {
+    _inWriteMode = false;
     _dataChannel->initInput();
 }
 
@@ -176,6 +220,7 @@ size_t MemoryChip::readBytes(uint16_t address, uint8_t* dest, size_t length)
 
 void MemoryChip::switchToWriteMode()
 {
+    _inWriteMode = true;
     _dataChannel->initOutput();
 }
 
