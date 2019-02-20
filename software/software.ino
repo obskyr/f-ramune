@@ -15,8 +15,9 @@
 
 // Memory chip address channel
 // Latch pin: 10 (SS - doesn't need to be SS, but might as well be)
-// When SPI is active, don't forget: MISO's direction is overridden to be an
-// input, and SS has to stay configured as an output to stay master!
+// When SPI is active, don't forget: MISO's direction is overridden
+// to be an input (but the pull-up is still available), and SS has to
+// stay configured as an output to stay master!
 // Within those config constraints, though, they can be used for unrelated IO.
 Output_SpiShiftRegister<uint16_t> ADDRESS_CHANNEL(20000000, SPI_MODE0, 10);
 
@@ -54,7 +55,7 @@ MemoryChip memoryChip(&ADDRESS_CHANNEL, &DATA_CHANNEL,
 Bounce testButton = Bounce();
 
 uint16_t addresses[] = {0x0000, 0x0123, 0x0ABC, 0x0DEF};
-uint8_t testBytes[] = {0x00, 0x01, 0x02, 0x03};
+uint8_t testBytes[] = {0x01, 0x02, 0x03, 0x04};
 size_t numTests = sizeof(addresses) / sizeof(*addresses);
 
 void printPaddedHex(unsigned int n, unsigned int digits)
@@ -102,7 +103,7 @@ uint8_t testRead(uint16_t address)
 
 void setup()
 {
-    testButton.attach(PIN_TEST_BUTTON, INPUT);
+    testButton.attach(PIN_TEST_BUTTON, INPUT_PULLUP);
     testButton.interval(25);
     pinMode(PIN_HAPPY_LED, OUTPUT);
     pinMode(PIN_FROWNY_LED, OUTPUT);
@@ -153,13 +154,13 @@ void loop()
     unsigned long int curMillis = millis();
 
     testButton.update();
-    if (testButton.rose()) {
+    if (testButton.fell()) {
         digitalWrite(PIN_HAPPY_LED, LOW);
         digitalWrite(PIN_FROWNY_LED, LOW);
         buttonHeld = true;
         buttonHeldStart = curMillis;
     }
-    if (!testButton.fell()) {
+    if (!testButton.rose()) {
         if (buttonHeld && curMillis - buttonHeldStart >= 1000) {
             if (!doWriteThisButtonPress || curMillis - lastBlink >= 500) {
                 blinkState = !blinkState;
