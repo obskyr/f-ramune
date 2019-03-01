@@ -56,6 +56,26 @@ SerialInterface SERIAL_INTERFACE(&Serial, &MEMORY_CHIP);
 
 Bounce TEST_BUTTON = Bounce();
 
+bool testChip()
+{
+    MemoryChipKnownProperties prevKnownProperties;
+    MemoryChipProperties prevProperties;
+    MEMORY_CHIP.getProperties(&prevKnownProperties, &prevProperties);
+    MEMORY_CHIP.analyze();
+    MemoryChipKnownProperties knownProperties;
+    MemoryChipProperties properties;
+    MEMORY_CHIP.getProperties(&knownProperties, &properties);
+    MEMORY_CHIP.setProperties(&prevKnownProperties, &prevProperties);
+
+    // To change what the test button tests, change these here criteria!
+    // These criteria test that the chip is fast 32 KiB non-volatile memory.
+    // That is, FRAM. (Or something equivalent, but it's gonna be FRAM.)
+    return (knownProperties.isOperational && properties.isOperational) &&
+           (knownProperties.size && properties.size == 0x8000) &&
+           (knownProperties.isNonVolatile && properties.isNonVolatile) &&
+           (knownProperties.isSlow && !properties.isSlow);
+}
+
 void setup()
 {
     Serial.begin(115200);
@@ -75,7 +95,11 @@ void loop()
             digitalWrite(PIN_HAPPY_LED, LOW);
             digitalWrite(PIN_FROWNY_LED, LOW);
         } else if (TEST_BUTTON.rose()) {
-            
+            if (testChip()) {
+                digitalWrite(PIN_HAPPY_LED, HIGH);
+            } else {
+                digitalWrite(PIN_FROWNY_LED, HIGH);
+            }
         }
     }
 }
