@@ -109,6 +109,9 @@ class Framune(object):
         """
         return self.get_version() == PROTOCOL_VERSION
     
+    def analyze(self):
+        self._set_and_analyze_chip(MemoryChip(None, None, None, None))
+
     def read(self, address, length):
         """Return `length` bytes read starting at `address` from the memory
         chip currently connected to the F-Ramune.

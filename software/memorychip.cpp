@@ -112,32 +112,70 @@ void MemoryChip::setProperties(const MemoryChipKnownProperties* knownProperties,
 
 void MemoryChip::analyzeUnknownProperties()
 {
-    if (_testAddress(0, false)) {
-        _properties.isOperational = true;
-    } else if (_testAddress(0, true)) {
-        _properties.isOperational = true;
-        _properties.isSlow = true;
-    } else {
+    // A decidedly non-operational chip doesn't have any properties, yo!
+    if (_knownProperties.isOperational && !_properties.isOperational) {
+        _knownProperties = {true, false, false, false};
+        _properties = {false, 0, false, false};
         return;
     }
 
-    if (!_knownProperties.size) {
-        for (_properties.size = 0x8000; _properties.size > 0; _properties.size >>= 1) {
-            if (_testAddress(_properties.size - 1, _properties.isSlow)) {
-                break;
+    bool wasInWriteMode = _inWriteMode;
+
+    // This'll overwrite a "known" isOperational if it's set to true, but that
+    // only makes sense - in testing isSlow, isOperational has to be tested,
+    // and ignoring that result would be mad silly (if neither testing fast
+    // nor slow works, we can't give isSlow a meaningful value, and we know
+    // the chip isn't operational). It does, however, preserve a "known"
+    // isSlow even if it tests OK for fast operation.
+    if (!_knownProperties.isOperational || !_knownProperties.isSlow) {
+        if (_testAddress(0, _knownProperties.isSlow && _properties.isSlow)) {
+            _knownProperties.isOperational = true;
+            _properties.isOperational = true;
+            _knownProperties.isSlow = true;
+            _properties.isSlow = _knownProperties.isSlow && _properties.isSlow;
+        } else if (!_knownProperties.isSlow && _testAddress(0, true)) {
+            _knownProperties.isOperational = true;
+            _properties.isOperational = true;
+            _knownProperties.isSlow = true;
+            _properties.isSlow = true;
+        } else {
+            // Neither a fast test nor a slow test worked.
+            _knownProperties = {true, false, false, false};
+            _properties = {false, 0, false, false};
+            if (wasInWriteMode) {
+                switchToWriteMode();
+            } else {
+                switchToReadMode();
             }
+            return;
         }
-        // If this is triggered, something went very very wrong...
-        if (_properties.size == 0) {return;}
     }
 
-    _properties.isNonVolatile = _testNonVolatility();
+    if (!_knownProperties.size) {
+        uint32_t size = _testSize();
+        if (size != 0) {
+            // If this isn't triggered, something went very very wrong...
+            _knownProperties.size = true;
+        }
+        _properties.size = size;
+    }
+
+    if (!_knownProperties.isNonVolatile) {
+        _knownProperties.isNonVolatile = true;
+        _properties.isNonVolatile = _testNonVolatility();
+    }
+
+    if (wasInWriteMode) {
+        switchToWriteMode();
+    } else {
+        switchToReadMode();
+    }
 }
 
 void MemoryChip::analyze()
 {
-    _properties = {false, 0, false, false};
     _knownProperties = {false, false, false, false};
+    _properties = {false, 0, false, false};
     analyzeUnknownProperties();
 }
 
@@ -145,39 +183,107 @@ bool MemoryChip::_testAddress(uint16_t address, bool slow)
 {
     (void) slow; // TODO: Implement EEPROM speed.
 
-    // TODO: Make this actually check addresses properly. As it stands,
-    // it doesn't check if the right address is being written to or one with
-    // fewer bits.
+    switchToReadMode();
     uint8_t prevByte = readByte(0);
     uint8_t testByte = prevByte == 0xA5 ? 0x5A : 0xA5;
+    switchToWriteMode();
     writeByte(address, testByte);
+    switchToReadMode();
     uint8_t readBack = readByte(address);
+    switchToReadMode();
     writeByte(address, prevByte);
     return readBack == testByte;
+}
+
+template <class T>
+bool inArray(T arr[], size_t length, T element)
+{
+    for (size_t i = 0; i < length; i++) {
+        if (arr[i] == element) {
+            return true;
+        }
+    }
+    return false;
+}
+
+uint32_t MemoryChip::_testSize()
+{
+    // We need to make sure that the byte we try writing isn't already at any
+    // of the lower addresses we're going to check - otherwise the size could
+    // be determined incorrectly depending on the data on the chip.
+    switchToReadMode();
+    uint8_t forbiddenTestBytes[MEMORY_CHIP_POSSIBLE_MIRRORS];
+    const uint32_t maxAddress = (
+        static_cast<uint32_t>(1) << MEMORY_CHIP_MAX_ADDRESS_WIDTH
+    ) - 1;
+    uint32_t testAddress = maxAddress;
+    uint8_t prevByte = readByte(testAddress);
+    for (int i = 0; i < MEMORY_CHIP_POSSIBLE_MIRRORS; i++) {
+        // The very highest test address won't be checked.
+        testAddress >>= 1;
+        forbiddenTestBytes[i] = readByte(testAddress);
+    }
+
+    uint8_t testByte = 0x5A;
+    while (inArray<uint8_t>(
+        forbiddenTestBytes, MEMORY_CHIP_POSSIBLE_MIRRORS, testByte
+    )) {
+        testByte++;
+    }
+
+    testAddress = maxAddress;
+    switchToWriteMode();
+    writeByte(testAddress, testByte);
+    // Checks the address width under the minimum address width too, to make
+    // sure there aren't mirrored bytes below that too.
+    switchToReadMode();
+    for (int i = 0; i < MEMORY_CHIP_POSSIBLE_MIRRORS; i++) {
+        testAddress >>= 1;
+        if (readByte(testAddress) != testByte) {
+            // Once again, we're in, we're out again, and no one gets hurt.
+            switchToWriteMode();
+            writeByte(maxAddress, prevByte);
+            // 1 for the bit lost from the left shift; 1 for address → size.
+            return (testAddress << 1) + 1 + 1;
+        }
+    }
+
+    // Yeesh. You don't wanna end up here.
+    // This means even the minimum address width is a mirrored byte.
+    return 0;
 }
 
 bool MemoryChip::_testNonVolatility()
 {
     // Gotta fit in the MCU's RAM! 512 bytes is 1/4 of the Atmega328P's RAM,
     // so... if this ends up being too much, dial it down a bit.
-    uint16_t testLength = 512;
+    uint16_t testLength;
+    if (_knownProperties.size && _properties.size < 512) {
+        testLength = _knownProperties.size;
+    } else {
+        testLength = 512;
+    }
     testLength = _properties.size < testLength ? _properties.size : testLength;
     uint8_t* prevBytes = new uint8_t[testLength];
 
     // Could be sped up by using a WE-controlled write to switch the bytes
     // as opposed to doing separate reads and writes, but... that'd
     // be some real #PrematureOptimization.
+    switchToReadMode();
     readBytes(0, prevBytes, testLength);
+    switchToWriteMode();
     for (uint16_t address = 0; address < testLength; address++) {
         writeByte(address, 0x22); // Extremely arbitrarily chosen value!
     }
 
     powerOff();
-    // TODO: Test how long SRAM actually takes to without a shadow
-    // of a doubt have lost at least a bit of the test data.
-    delay(2500);
+    // On the SRAM chip I tested this with, 10 milliseconds was enough for most
+    // of the data to have been reliably lost (~416 / 512 bytes). This might be
+    // different for other SRAM chips, though, so it may need to be dialed up...
+    delay(10);
     powerOn();
     
+    switchToReadMode();
     bool isNonVolatile = true;
     for (uint16_t address = 0; address < testLength; address++) {
         if (readByte(address) != 0x22) {
@@ -186,7 +292,21 @@ bool MemoryChip::_testNonVolatility()
         }
     }
 
+    // Alternate version of the paragraph above, which tests how much of the
+    // data was lost. Useful for testing how quickly the SRAM chip loses data.
+    // switchToReadMode();
+    // uint16_t numMessedUp = 0;
+    // for (uint16_t address = 0; address < testLength; address++) {
+    //     if (readByte(address) != 0x22) {
+    //         numMessedUp++;
+    //     }
+    // }
+    // Serial.write(static_cast<uint8_t>(numMessedUp >> 8));
+    // Serial.write(static_cast<uint8_t>(numMessedUp));
+    // bool isNonVolatile = !static_cast<bool>(numMessedUp);
+
     // It's like we were never there.
+    switchToWriteMode();
     writeBytes(0, prevBytes, testLength);
     delete[] prevBytes;
 

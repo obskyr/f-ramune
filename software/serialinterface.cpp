@@ -81,8 +81,11 @@ bool SerialInterface::_checkForCommand()
                                              receivedProperties) != 0) {
                 return false;
             }
-            _memoryChip->setProperties(&receivedKnownProperties, &receivedProperties);
-            // _memoryChip->analyzeUnknownProperties();
+            _memoryChip->setProperties(&receivedKnownProperties,
+                                       &receivedProperties);
+            _memoryChip->analyzeUnknownProperties();
+            _memoryChip->getProperties(&receivedKnownProperties,
+                                       &receivedProperties);
             _sendMemoryChipProperties(receivedKnownProperties, receivedProperties);
             break;
         }

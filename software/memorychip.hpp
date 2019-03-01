@@ -6,8 +6,18 @@
 #include "fastpins.hpp"
 
 // MemoryChip::analyze() will check sizes between these two bit widths.
-#define MEMORY_CHIP_MAX_ADDRESS_WIDTH 17
+// To support memory chips of, say, up to 128 KiB, this max would need to be
+// raised to 17, and MemoryChip would need to be a template that takes the
+// integer type (uint32_t, in the case of 128 KiB) of its address as a
+// parameter. In that case, it wouldn't make too much sense to have the same
+// min/max for each type of MemoryChip, either.
+#define MEMORY_CHIP_MAX_ADDRESS_WIDTH 16
 #define MEMORY_CHIP_MIN_ADDRESS_WIDTH 8
+
+// How many addresses a byte may be mirrored at, given the above parameters.
+#define MEMORY_CHIP_POSSIBLE_MIRRORS ( \
+    MEMORY_CHIP_MAX_ADDRESS_WIDTH - MEMORY_CHIP_MIN_ADDRESS_WIDTH + 1 \
+)
 
 struct MemoryChipProperties
 {
@@ -67,6 +77,7 @@ private:
     MemoryChipProperties _properties = {false, 0, false, false};
 
     bool _testAddress(uint16_t address, bool slow);
+    uint32_t _testSize();
     bool _testNonVolatility();
 };
 
