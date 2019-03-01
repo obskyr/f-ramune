@@ -31,8 +31,8 @@ void MemoryChip::initPins()
     SET_BITS_IN_PORT_HIGH(_wePin.out, _wePin.bitMask);
     pinMode(_wePin.pin, OUTPUT);
 
+    powerOff();
     pinMode(_powerPin.pin, OUTPUT);
-    powerOn();
 }
 
 void MemoryChip::powerOff()
@@ -96,51 +96,58 @@ void MemoryChip::powerOn()
     delayMicroseconds(5);
 }
 
-bool MemoryChip::getPropertiesAreKnown()
+void MemoryChip::getProperties(MemoryChipKnownProperties* knownProperties,
+                               MemoryChipProperties* properties)
 {
-    return _propertiesAreKnown;
+    *knownProperties = _knownProperties;
+    *properties = _properties;
 }
 
-MemoryChipProperties MemoryChip::getProperties()
+void MemoryChip::setProperties(const MemoryChipKnownProperties* knownProperties,
+                               const MemoryChipProperties* properties)
 {
-    return _properties;
+    _knownProperties = *knownProperties;
+    _properties = *properties;
 }
 
-void MemoryChip::setProperties(MemoryChipProperties properties)
+void MemoryChip::analyzeUnknownProperties()
 {
-    _properties = properties;
-    _propertiesAreKnown = true;
-}
-
-void MemoryChip::analyze()
-{
-    _properties = {false, 0, false, false};
-    _propertiesAreKnown = true;
-
     if (_testAddress(0, false)) {
-        _properties.canReadAndWrite = true;
+        _properties.isOperational = true;
     } else if (_testAddress(0, true)) {
-        _properties.canReadAndWrite = true;
+        _properties.isOperational = true;
         _properties.isSlow = true;
     } else {
         return;
     }
 
-    for (_properties.size = 0x8000; _properties.size > 0; _properties.size >>= 1) {
-        if (_testAddress(_properties.size - 1, _properties.isSlow)) {
-            break;
+    if (!_knownProperties.size) {
+        for (_properties.size = 0x8000; _properties.size > 0; _properties.size >>= 1) {
+            if (_testAddress(_properties.size - 1, _properties.isSlow)) {
+                break;
+            }
         }
+        // If this is triggered, something went very very wrong...
+        if (_properties.size == 0) {return;}
     }
-    // If this is triggered, something went very very wrong...
-    if (_properties.size == 0) {return;}
 
     _properties.isNonVolatile = _testNonVolatility();
+}
+
+void MemoryChip::analyze()
+{
+    _properties = {false, 0, false, false};
+    _knownProperties = {false, false, false, false};
+    analyzeUnknownProperties();
 }
 
 bool MemoryChip::_testAddress(uint16_t address, bool slow)
 {
     (void) slow; // TODO: Implement EEPROM speed.
 
+    // TODO: Make this actually check addresses properly. As it stands,
+    // it doesn't check if the right address is being written to or one with
+    // fewer bits.
     uint8_t prevByte = readByte(0);
     uint8_t testByte = prevByte == 0xA5 ? 0x5A : 0xA5;
     writeByte(address, testByte);

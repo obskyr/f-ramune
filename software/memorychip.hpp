@@ -5,13 +5,24 @@
 #include "channelio.hpp"
 #include "fastpins.hpp"
 
-const uint16_t UNKNOWN_SIZE = 0;
+// MemoryChip::analyze() will check sizes between these two bit widths.
+#define MEMORY_CHIP_MAX_ADDRESS_WIDTH 17
+#define MEMORY_CHIP_MIN_ADDRESS_WIDTH 8
+
 struct MemoryChipProperties
 {
-    bool canReadAndWrite;
-    uint16_t size;
+    bool isOperational;
+    uint32_t size;
     bool isNonVolatile;
     bool isSlow;
+};
+
+struct MemoryChipKnownProperties
+{
+    bool isOperational : 1;
+    bool size : 1;
+    bool isNonVolatile : 1;
+    bool isSlow : 1;
 };
 
 class MemoryChip
@@ -27,9 +38,11 @@ public:
     void powerOff();
     void powerOn();
 
-    bool getPropertiesAreKnown();
-    MemoryChipProperties getProperties();
-    void setProperties(MemoryChipProperties properties);
+    void getProperties(MemoryChipKnownProperties* knownProperties,
+                       MemoryChipProperties* properties);
+    void setProperties(const MemoryChipKnownProperties* knownProperties,
+                       const MemoryChipProperties* properties);
+    void analyzeUnknownProperties();
     void analyze();
     
     void switchToReadMode();
@@ -50,8 +63,8 @@ private:
 
     bool _inWriteMode = false;
 
-    bool _propertiesAreKnown = false;
-    MemoryChipProperties _properties = {false, UNKNOWN_SIZE, false, false};
+    MemoryChipKnownProperties _knownProperties = {false, false, false, false};
+    MemoryChipProperties _properties = {false, 0, false, false};
 
     bool _testAddress(uint16_t address, bool slow);
     bool _testNonVolatility();

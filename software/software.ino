@@ -59,6 +59,7 @@ Bounce TEST_BUTTON = Bounce();
 void setup()
 {
     Serial.begin(115200);
+    MEMORY_CHIP.powerOn();
     TEST_BUTTON.attach(PIN_TEST_BUTTON, INPUT_PULLUP);
     TEST_BUTTON.interval(25);
     pinMode(PIN_HAPPY_LED, OUTPUT);

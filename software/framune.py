@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
-import serial
+import os
 import struct
 import sys
+import serial
 from collections import OrderedDict
 
 BAUD_RATE = 115200
@@ -32,6 +33,7 @@ class Framune(object):
         else:
             self.serial_port = serial_port
             self._serial = serial_without_dtr(serial_port, BAUD_RATE, timeout=TIMEOUT)
+        self._chip = MemoryChip(None, None, None, None, framune=self)
     
     def __exit__(self, *args):
         self.close()
@@ -52,14 +54,12 @@ class Framune(object):
             data = self._serial.read(length)
             if len(data) < length:
                 raise TimeoutError
-            print("Read {} bytes: {}".format(len(data), data))
         except (serial.SerialTimeoutException, TimeoutError):
             raise TimeoutError("F-Ramune did not respond in time.")
         else:
             return data
     
     def _write(self, data):
-        print("Writing {} bytes: {}".format(len(data), data))
         self._serial.write(data)
 
     def _read_uint(self, fmt, length):
@@ -88,11 +88,15 @@ class Framune(object):
             self._write_byte(0x01)
             raise ConnectionError("Command didn't reach F-Ramune intact.")
     
-    def _set_and_analyze_chip(self):
+    def _set_and_analyze_chip(self, chip):
         self._command(0x01)
-        self.write(self.chip.known_status_to_bytes())
-        self.write(self.chip.to_bytes())
-        self.chip = MemoryChip.from_bytes(self._read(MEMORY_CHIP_DATA_STRUCTURE_SIZE))
+        self._write(chip.known_status_to_bytes())
+        self._write(chip.to_bytes())
+        self._chip = MemoryChip.from_bytes(
+            self._read(MEMORY_CHIP_KNOWN_DATA_STRUCTURE_SIZE),
+            self._read(MEMORY_CHIP_DATA_STRUCTURE_SIZE),
+            framune=self
+        )
 
     def get_version(self):
         """Return the protocol version of the F-Ramune."""
@@ -124,7 +128,12 @@ MEMORY_CHIP_DATA_STRUCTURE = OrderedDict((
 ))
 MEMORY_CHIP_DATA_STRUCTURE_FMT = ENDIANNESS + \
     ''.join(MEMORY_CHIP_DATA_STRUCTURE.values())
-MEMORY_CHIP_DATA_STRUCTURE_SIZE = struct.calcsize(MEMORY_CHIP_DATA_STRUCTURE_FMT)
+MEMORY_CHIP_DATA_STRUCTURE_SIZE = \
+    struct.calcsize(MEMORY_CHIP_DATA_STRUCTURE_FMT)
+MEMORY_CHIP_KNOWN_DATA_STRUCTURE_FMT = ENDIANNESS + \
+    '?' * len(MEMORY_CHIP_DATA_STRUCTURE)
+MEMORY_CHIP_KNOWN_DATA_STRUCTURE_SIZE = \
+    struct.calcsize(MEMORY_CHIP_KNOWN_DATA_STRUCTURE_FMT)
 class MemoryChip(object):
     def __init__(self, is_operational=None, size=None,
                  is_nonvolatile=None, is_eeprom=None, framune=None):
@@ -135,18 +144,30 @@ class MemoryChip(object):
         self._framune = framune
     
     @classmethod
-    def from_bytes(cls, data, framune=None):
-        values = struct.unpack(MEMORY_CHIP_DATA_STRUCTURE_FMT, data)
-        return cls(**{k: v for k, v in zip(MEMORY_CHIP_DATA_STRUCTURE, values)},
-                   framune=framune)
+    def from_bytes(cls, known, properties, framune=None):
+        known = struct.unpack(MEMORY_CHIP_KNOWN_DATA_STRUCTURE_FMT, known)
+        values = struct.unpack(MEMORY_CHIP_DATA_STRUCTURE_FMT, properties)
+        return cls(**{
+            k: (v if is_known else None)
+            for k, v, is_known
+            in zip(MEMORY_CHIP_DATA_STRUCTURE, values, known)
+        }, framune=framune)
+    
+    def __repr__(self):
+        return "<MemoryChip: {}>".format(', '.join('{}={}'.format(
+            attr, getattr(self, attr)
+        ) for attr in MEMORY_CHIP_DATA_STRUCTURE))
 
     def known_status_to_bytes(self):
         return bytes(int(getattr(self, attr) is not None)
             for attr in MEMORY_CHIP_DATA_STRUCTURE)
 
     def to_bytes(self):
-        return b''.join(struct.pack(ENDIANNESS + v, int(getattr(self, k)))
-            for k, v in MEMORY_CHIP_DATA_STRUCTURE.items())
+        return struct.pack(MEMORY_CHIP_DATA_STRUCTURE_FMT, *(
+            getattr(self, attr) or 0 for attr in MEMORY_CHIP_DATA_STRUCTURE
+        ))
+        #return b''.join(struct.pack(ENDIANNESS + v, int(getattr(self, k) or 0))
+        #    for k, v in MEMORY_CHIP_DATA_STRUCTURE.items())
 
 def main(*argv):
     script_name = os.path.split(__file__)[-1]
@@ -161,4 +182,4 @@ def main(*argv):
     return 0
 
 if __name__ == '__main__':
-    sys.exit(main(sys.argv[1:]))
+    sys.exit(main(*sys.argv[1:]))
