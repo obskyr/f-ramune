@@ -19,3 +19,6 @@ _autosave-*
 # Exported BOM files
 *.xml
 *.csv
+
+# Ignore the cache library too - we already "cache" parts manually.
+*-cache.lib
