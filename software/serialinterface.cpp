@@ -10,6 +10,20 @@ bool SerialInterface::update()
     case SerialState::WAITING_FOR_COMMAND:
         return _checkForCommand();
         break;
+    case SerialState::READING:
+        if (_currentBytesLeft) {
+            uint8_t n = _memoryChip->readByte(_currentAddress);
+            _currentCrc32.update(n);
+            _serial->write(n);
+            _currentAddress++;
+            _currentBytesLeft--;
+            return true;
+        } else {
+            _writeUint32(_currentCrc32.finalize());
+            _state = SerialState::WAITING_FOR_COMMAND;
+            return false;
+        }
+        break;
     }
     return false;
 }
@@ -75,21 +89,29 @@ bool SerialInterface::_checkForCommand()
             _writeUint16(FRAMUNE_PROTOCOL_VERSION);
             break;
         case static_cast<uint8_t>(SerialCommand::SET_AND_ANALYZE_CHIP):
-            MemoryChipKnownProperties receivedKnownProperties;
-            MemoryChipProperties receivedProperties;
-            if (_receiveMemoryChipProperties(receivedKnownProperties,
-                                             receivedProperties) != 0) {
-                return false;
-            }
-            _memoryChip->setProperties(&receivedKnownProperties,
-                                       &receivedProperties);
-            _memoryChip->analyzeUnknownProperties();
-            _memoryChip->getProperties(&receivedKnownProperties,
-                                       &receivedProperties);
-            _sendMemoryChipProperties(receivedKnownProperties, receivedProperties);
+            return _commandSetAndAnalyzeChip();
             break;
+        case static_cast<uint8_t>(SerialCommand::READ):
+            return _commandRead();
         }
     }
+    return false;
+}
+
+bool SerialInterface::_commandSetAndAnalyzeChip()
+{
+    MemoryChipKnownProperties receivedKnownProperties;
+    MemoryChipProperties receivedProperties;
+    if (_receiveMemoryChipProperties(receivedKnownProperties,
+                                     receivedProperties) != 0) {
+        return false;
+    }
+    _memoryChip->setProperties(&receivedKnownProperties,
+                               &receivedProperties);
+    _memoryChip->analyzeUnknownProperties();
+    _memoryChip->getProperties(&receivedKnownProperties,
+                               &receivedProperties);
+    _sendMemoryChipProperties(receivedKnownProperties, receivedProperties);
     return false;
 }
 
@@ -137,4 +159,39 @@ void SerialInterface::_sendMemoryChipProperties(
     _writeUint32(properties.size);
     _serial->write(properties.isNonVolatile);
     _serial->write(properties.isSlow);
+}
+
+bool SerialInterface::_commandRead()
+{
+    uint32_t address32Bits;
+    uint16_t address;
+    uint32_t size;
+    if (_readUint32WithTimeout(address32Bits) != 0) {return false;}
+    if (_readUint32WithTimeout(size) != 0) {return false;}
+
+    MemoryChipKnownProperties knownProperties;
+    MemoryChipProperties properties;
+    _memoryChip->getProperties(&knownProperties, &properties);
+
+    if (address32Bits > 0xFFFF) {
+        size = 0;
+        address = 0;
+    } else {
+        address = static_cast<uint16_t>(address32Bits);
+    }
+    if (knownProperties.size) {
+        if (address > properties.size - 1) {
+            size = 0;
+        } else if (properties.size - address < size) {
+            size = properties.size - address;
+        }
+    }
+    _writeUint32(size);
+    
+    _currentAddress = address;
+    _currentBytesLeft = size;
+    _currentCrc32.reset();
+    _state = SerialState::READING;
+
+    return true;
 }

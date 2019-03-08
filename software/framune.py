@@ -4,6 +4,7 @@ import os
 import struct
 import sys
 import serial
+from binascii import crc32
 from collections import OrderedDict
 
 BAUD_RATE = 115200
@@ -80,6 +81,12 @@ class Framune(object):
     def _write_uint16(self, n):
         self._write_uint(ENDIANNESS + 'H', n)
 
+    def _read_uint32(self):
+        return self._read_uint(ENDIANNESS + 'I', 4)
+
+    def _write_uint32(self, n):
+        self._write_uint(ENDIANNESS + 'I', n)
+
     def _command(self, command):
         self._write_byte(command)
         if self._read_byte() == command:
@@ -113,10 +120,20 @@ class Framune(object):
         self._set_and_analyze_chip(MemoryChip(None, None, None, None))
 
     def read(self, address, length):
-        """Return `length` bytes read starting at `address` from the memory
-        chip currently connected to the F-Ramune.
+        """Return up to `length` bytes read starting at `address` from
+        the memory chip currently connected to the F-Ramune.
         """
-        pass
+        self._command(0x02)
+        self._write_uint32(address)
+        self._write_uint32(length)
+        length = self._read_uint32()
+        data = self._read(length)
+        received_crc = self._read_uint32()
+        computed_crc = crc32(data)
+        if received_crc != computed_crc:
+            raise ConnectionError("The computed checksum didn't match the one "
+                                  "received from the F-Ramune.")
+        return data
     
     def write(self, address, data):
         """Write the bytes `data` to the memory chip currently connected to
@@ -169,8 +186,6 @@ class MemoryChip(object):
         return struct.pack(MEMORY_CHIP_DATA_STRUCTURE_FMT, *(
             getattr(self, attr) or 0 for attr in MEMORY_CHIP_DATA_STRUCTURE
         ))
-        #return b''.join(struct.pack(ENDIANNESS + v, int(getattr(self, k) or 0))
-        #    for k, v in MEMORY_CHIP_DATA_STRUCTURE.items())
 
 def main(*argv):
     script_name = os.path.split(__file__)[-1]
