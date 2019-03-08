@@ -140,6 +140,17 @@ class Framune(object):
         the F-Ramune, starting at `address`."""
         pass
 
+def framune_updating_property(internal_name):
+    def getter(self):
+        return getattr(self, internal_name)
+    prop = property(getter)
+    def setter(self, value):
+        setattr(self, internal_name, value)
+        if self._framune is not None:
+            self._framune.chip = self
+    with_setter = prop.setter(setter)
+    return with_setter
+
 MEMORY_CHIP_DATA_STRUCTURE = OrderedDict((
     ('is_operational', '?'),
     ('size', 'I'),
@@ -157,12 +168,12 @@ MEMORY_CHIP_KNOWN_DATA_STRUCTURE_SIZE = \
 class MemoryChip(object):
     def __init__(self, is_operational=None, size=None,
                  is_nonvolatile=None, is_eeprom=None, framune=None):
-        self.is_operational = is_operational
-        self.size = size
-        self.is_nonvolatile = is_nonvolatile
-        self.is_eeprom = is_eeprom
+        self._is_operational = is_operational
+        self._size = size
+        self._is_nonvolatile = is_nonvolatile
+        self._is_eeprom = is_eeprom
         self._framune = framune
-    
+
     @classmethod
     def from_bytes(cls, known, properties, framune=None):
         known = struct.unpack(MEMORY_CHIP_KNOWN_DATA_STRUCTURE_FMT, known)
@@ -177,6 +188,11 @@ class MemoryChip(object):
         return "<MemoryChip: {}>".format(', '.join('{}={}'.format(
             attr, getattr(self, attr)
         ) for attr in MEMORY_CHIP_DATA_STRUCTURE))
+
+    is_operational = framune_updating_property('_is_operational')
+    size           = framune_updating_property('_size')
+    is_nonvolatile = framune_updating_property('_is_nonvolatile')
+    is_eeprom      = framune_updating_property('_is_eeprom')
 
     def known_status_to_bytes(self):
         return bytes(int(getattr(self, attr) is not None)
