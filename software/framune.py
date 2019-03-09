@@ -251,6 +251,18 @@ class MemoryChip(object):
             getattr(self, attr) or 0 for attr in MEMORY_CHIP_DATA_STRUCTURE
         ))
 
+def format_size(size):
+    n = size
+    for unit in ("", "KiB", "MiB"):
+        if n < 1024:
+            break
+        n /= 1024
+    else:
+        unit = "GiB"
+    n = "{}".format(round(n)) if n - int(n) < 0.00001 else "~{:.1f}".format(n)
+    parenthetical = " ({} {})".format(n, unit) if unit else ""
+    return "{} bytes{}".format(size, parenthetical)
+
 def main(*argv):
     script_name = os.path.basename(__file__)
 
@@ -340,12 +352,16 @@ def main(*argv):
 
     arguments = parser.parse_args(argv)
 
-    if arguments.command == 'read' and arguments.o is None and not sys.stdout.isatty():
+    if arguments.command == 'read' and arguments.o is None and sys.stdout.isatty():
         print("No output specified! Please either specify -o or pipe output.",
               file=sys.stderr)
         return 1
-    if arguments.command == 'write' and arguments.i is None and not sys.stdin.isatty():
+    if arguments.command == 'write' and arguments.i is None and sys.stdin.isatty():
         print("No input specified! Please either specify -i or pipe input.",
+              file=sys.stderr)
+        return 1
+    if arguments.command == 'read' and not (arguments.analyze or arguments.size is not None):
+        print("No size specified for read! Either specify -s or --analyze.",
               file=sys.stderr)
         return 1
 
@@ -364,12 +380,14 @@ def main(*argv):
                       file=sys.stderr)
                 return 1
         
-        if arguments.analyze and not arguments.analyze:
+        if arguments.analyze and not arguments.command == 'analyze':
             framune.analyze()
         
         if arguments.command == 'version':
             print(framune.get_version())
-        elif arguments.command == 'analyze':
+            return 0
+
+        if arguments.command == 'analyze':
             framune.analyze()
             if arguments.json:
                 properties = OrderedDict(
@@ -379,16 +397,6 @@ def main(*argv):
                 print(json.dumps(properties, indent=4))
             else:
                 yn = lambda x: "Yes" if x else "No"
-                def format_size(size):
-                    n = size
-                    for unit in ("", "KiB", "MiB"):
-                        if n < 1024:
-                            break
-                        n /= 1024
-                    else:
-                        unit = "GiB"
-                    n = "{}".format(round(n)) if n - int(n) < 0.00001 else "~{:.1f}".format(n)
-                    return "{} ({} {})".format(size, n, unit)
                 rows = (
                     ('is_operational', "Is operational:  ", yn),
                     ('size',           "Size:            ", format_size),
@@ -399,6 +407,48 @@ def main(*argv):
                     attr = getattr(framune.chip, attr)
                     value = transformer(attr) if attr is not None else "Unknown"
                     print("{}{}".format(label, value))
+            
+            return 0
+        
+        if framune.chip.is_operational == False:
+            print("It appears that the connected F-Ramune is not connected "
+                  "to an operational memory chip.", file=sys.stderr)
+            return 1
+
+        if arguments.command == 'read':
+            size = arguments.size if arguments.size is not None else framune.chip.size
+            if size is None:
+                print("Could not determine size of memory!", file=sys.stderr)
+                return 1
+            data = framune.read(arguments.address, size)
+            if arguments.o:
+                with open(arguments.o, 'wb') as f:
+                    f.write(data)
+                if sys.stdout.isatty():
+                    print("Read {}!".format(format_size(len(data))))
+                else:
+                    print(len(data))
+            else:
+                sys.stdout.buffer.write(data)
+                sys.stdout.buffer.flush()
+            
+            return 0
+        
+        if arguments.command == 'write':
+            if arguments.i:
+                with open(arguments.i, 'rb') as f:
+                    data = f.read()
+            else:
+                data = sys.stdin.buffer.read()
+            if arguments.size:
+                data = data[:arguments.size]
+            written = framune.write(arguments.address, data)
+            if sys.stdout.isatty():
+                print("Wrote {}!".format(format_size(written)))
+            else:
+                print(written)
+            
+            return 0
 
     return 0
 
