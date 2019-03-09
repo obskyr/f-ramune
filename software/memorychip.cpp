@@ -190,7 +190,7 @@ bool MemoryChip::_testAddress(uint16_t address, bool slow)
     writeByte(address, testByte);
     switchToReadMode();
     uint8_t readBack = readByte(address);
-    switchToReadMode();
+    switchToWriteMode();
     writeByte(address, prevByte);
     return readBack == testByte;
 }

@@ -11,18 +11,10 @@ bool SerialInterface::update()
         return _checkForCommand();
         break;
     case SerialState::READING:
-        if (_currentBytesLeft) {
-            uint8_t n = _memoryChip->readByte(_currentAddress);
-            _currentCrc32.update(n);
-            _serial->write(n);
-            _currentAddress++;
-            _currentBytesLeft--;
-            return true;
-        } else {
-            _writeUint32(_currentCrc32.finalize());
-            _state = SerialState::WAITING_FOR_COMMAND;
-            return false;
-        }
+        return _stateReading();
+        break;
+    case SerialState::WRITING:
+        return _stateWriting();
         break;
     }
     return false;
@@ -93,6 +85,10 @@ bool SerialInterface::_checkForCommand()
             break;
         case static_cast<uint8_t>(SerialCommand::READ):
             return _commandRead();
+            break;
+        case static_cast<uint8_t>(SerialCommand::WRITE):
+            return _commandWrite();
+            break;
         }
     }
     return false;
@@ -161,13 +157,13 @@ void SerialInterface::_sendMemoryChipProperties(
     _serial->write(properties.isSlow);
 }
 
-bool SerialInterface::_commandRead()
+int SerialInterface::_readAddressAndSize(uint16_t& address, uint32_t& size)
 {
     uint32_t address32Bits;
-    uint16_t address;
-    uint32_t size;
-    if (_readUint32WithTimeout(address32Bits) != 0) {return false;}
-    if (_readUint32WithTimeout(size) != 0) {return false;}
+
+    int errorCode;
+    if ((errorCode = _readUint32WithTimeout(address32Bits)) != 0) {return errorCode;}
+    if ((errorCode = _readUint32WithTimeout(size)) != 0) {return errorCode;}
 
     MemoryChipKnownProperties knownProperties;
     MemoryChipProperties properties;
@@ -186,12 +182,113 @@ bool SerialInterface::_commandRead()
             size = properties.size - address;
         }
     }
+
+    return 0;
+}
+
+bool SerialInterface::_commandRead()
+{
+    uint16_t address;
+    uint32_t size;
+    if (_readAddressAndSize(address, size) != 0) {return false;}
     _writeUint32(size);
     
+    _currentOperationStart = address;
     _currentAddress = address;
+    _currentOperationSize = size;
     _currentBytesLeft = size;
     _currentCrc32.reset();
+    _memoryChip->switchToReadMode();
     _state = SerialState::READING;
 
     return true;
+}
+
+bool SerialInterface::_stateReading()
+{
+    if (_currentBytesLeft) {
+        uint8_t n = _memoryChip->readByte(_currentAddress);
+        _currentCrc32.update(n);
+        _serial->write(n);
+        _currentAddress++;
+        _currentBytesLeft--;
+        return true;
+    } else {
+        _writeUint32(_currentCrc32.finalize());
+        _state = SerialState::WAITING_FOR_COMMAND;
+        return false;
+    }
+}
+
+bool SerialInterface::_commandWrite()
+{
+    MemoryChipKnownProperties knownProperties;
+    MemoryChipProperties properties;
+    _memoryChip->getProperties(&knownProperties, &properties);
+    // Unused at the moment.
+    _serial->write(knownProperties.isSlow && properties.isSlow);
+
+    uint16_t address;
+    uint32_t size;
+    if (_readAddressAndSize(address, size) != 0) {return false;}
+    _writeUint32(size);
+
+    _currentOperationStart = address;
+    _currentAddress = address;
+    _currentOperationSize = size;
+    _currentBytesLeft = size;
+    _currentCrc32.reset();
+    _memoryChip->switchToWriteMode();
+    _state = SerialState::WRITING;
+
+    return true;
+}
+
+bool SerialInterface::_stateWriting()
+{
+    if (_currentBytesLeft) {
+        uint8_t n;
+        if (_readByteWithTimeout(n) != 0) {
+            _state = SerialState::WAITING_FOR_COMMAND;
+            return false;
+        }
+        _memoryChip->writeByte(_currentAddress, n);
+        _currentAddress++;
+        _currentBytesLeft--;
+        return true;
+    } else {
+        _memoryChip->switchToReadMode();
+        uint32_t end = _currentOperationStart + _currentOperationSize;
+        bool all_bytes_seem_pulled = true;
+        for (uint32_t address = _currentOperationStart; address < end; address++) {
+            uint8_t n = _memoryChip->readByte(address);
+            _currentCrc32.update(n);
+            if (n != 0xFF && n != 0x00) {
+                all_bytes_seem_pulled = false;
+            }
+        }
+        _writeUint32(_currentCrc32.finalize());
+
+        // If all the bytes written were 0x00 or 0xFF, and the data lines have
+        // pull-downs or pull-ups (respectively) on them, it's impossible to
+        // tell whether the data was written successfully without performing
+        // an extra write like this.
+        uint8_t errorCode = 0;
+        if (all_bytes_seem_pulled) {
+            _memoryChip->switchToReadMode();
+            uint8_t prevByte = _memoryChip->readByte(_currentOperationStart);
+            _memoryChip->switchToWriteMode();
+            _memoryChip->writeByte(_currentOperationStart, 0xA5);
+            _memoryChip->switchToReadMode();
+            if (_memoryChip->readByte(_currentOperationStart) != 0xA5) {
+                errorCode = 1;
+            }
+            _memoryChip->switchToWriteMode();
+            _memoryChip->writeByte(_currentOperationStart, prevByte);
+        }
+        _serial->write(errorCode);
+
+        _state = SerialState::WAITING_FOR_COMMAND;
+        return false;
+    }
 }

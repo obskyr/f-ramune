@@ -27,25 +27,33 @@ private:
         MemoryChipKnownProperties& knownProperties,
         MemoryChipProperties& properties
     );
+    int _readAddressAndSize(uint16_t& address, uint32_t& size);
     bool _commandRead();
+    bool _stateReading();
+    bool _commandWrite();
+    bool _stateWriting();
 
     enum class SerialState
     {
         WAITING_FOR_COMMAND,
-        READING
+        READING,
+        WRITING
     };
 
     enum class SerialCommand : uint8_t
     {
         GET_VERSION,
         SET_AND_ANALYZE_CHIP,
-        READ
+        READ,
+        WRITE
     };
 
     Stream* _serial;
     MemoryChip* _memoryChip;
     SerialState _state;
 
+    uint16_t _currentOperationStart;
+    uint32_t _currentOperationSize;
     uint16_t _currentAddress;
     uint32_t _currentBytesLeft;
     CRC32 _currentCrc32;

@@ -6,9 +6,10 @@ import sys
 import serial
 from binascii import crc32
 from collections import OrderedDict
+from contextlib import contextmanager
 
 BAUD_RATE = 115200
-TIMEOUT = 1
+MIN_TIMEOUT = 1
 
 PROTOCOL_VERSION = 0
 ENDIANNESS = '>'
@@ -26,6 +27,18 @@ def serial_without_dtr(port, *args, **kwargs):
         ser.open()
     return ser
 
+def appropriate_timeout(length):
+    """Return a reasonable timeout value for transferring `length`
+    bytes at F-Ramune's baud rate."""
+    return max(MIN_TIMEOUT, 1.5 * (length / (BAUD_RATE // 8)))
+
+@contextmanager
+def temp_timeout(ser, timeout):
+    original_timeout = ser.timeout
+    ser.timeout = timeout
+    yield
+    ser.timeout = original_timeout
+
 class Framune(object):
     def __init__(self, serial_port):
         if hasattr(serial_port, 'port'):
@@ -33,7 +46,9 @@ class Framune(object):
             self._serial = serial_port
         else:
             self.serial_port = serial_port
-            self._serial = serial_without_dtr(serial_port, BAUD_RATE, timeout=TIMEOUT)
+            self._serial = serial_without_dtr(serial_port, BAUD_RATE,
+                                              timeout=MIN_TIMEOUT,
+                                              inter_byte_timeout=MIN_TIMEOUT)
         self._chip = MemoryChip(None, None, None, None, framune=self)
     
     def __exit__(self, *args):
@@ -127,18 +142,46 @@ class Framune(object):
         self._write_uint32(address)
         self._write_uint32(length)
         length = self._read_uint32()
-        data = self._read(length)
+
+        with temp_timeout(self._serial, appropriate_timeout(length)):
+            data = self._read(length)
+        
         received_crc = self._read_uint32()
         computed_crc = crc32(data)
         if received_crc != computed_crc:
             raise ConnectionError("The computed checksum didn't match the one "
                                   "received from the F-Ramune.")
+        
         return data
     
     def write(self, address, data):
         """Write the bytes `data` to the memory chip currently connected to
         the F-Ramune, starting at `address`."""
-        pass
+        length = len(data)
+        self._command(0x03)
+        # Unused at the moment. Who needs EEPROM support anyway...
+        is_slow = self._read_byte()
+        self._write_uint32(address)
+        self._write_uint32(length)
+        length = self._read_uint32()
+        data = data[:length]
+
+        with temp_timeout(self._serial, appropriate_timeout(length)):
+            self._write(data)
+            # Receiving the CRC really only transfers 4 bytes, but the F-Ramune
+            # operates on all of the bytes written to compute it, so it takes
+            # time, and thus needs a more lenient timeout. appropriate_timeout
+            # does that job well enough (it's a bit too lenient here, even).
+            received_crc = self._read_uint32()
+        error_code = self._read_byte()
+        computed_crc = crc32(data)
+        if received_crc != computed_crc:
+            raise ConnectionError("The computed checksum didn't match the one "
+                                  "received from the F-Ramune.")
+        if error_code != 0:
+            raise ConnectionError("Write failed. "
+                                  "Is there really a memory chip connected?")
+        return length
 
 def framune_updating_property(internal_name):
     def getter(self):
