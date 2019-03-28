@@ -35,6 +35,11 @@ void MemoryChip::initPins()
     pinMode(_powerPin.pin, OUTPUT);
 }
 
+bool MemoryChip::getIsOn()
+{
+    return _isOn;
+}
+
 void MemoryChip::powerOff()
 {
     if (_powerPinOnState == HIGH) {
@@ -62,6 +67,7 @@ void MemoryChip::powerOff()
         // minimize the risk of accidentally writing to the chip on power off.
         SET_BITS_IN_PORT_LOW(_cePin.out, _cePin.bitMask);
     }
+    _isOn = false;
     /*
         This delay is to accommodate MOSFET switching time.
         
@@ -93,6 +99,7 @@ void MemoryChip::powerOn()
         SET_BITS_IN_PORT_HIGH(_oePin.out, _oePin.bitMask);
         SET_BITS_IN_PORT_HIGH(_wePin.out, _wePin.bitMask);
     }
+    _isOn = true;
     delayMicroseconds(5);
 }
 

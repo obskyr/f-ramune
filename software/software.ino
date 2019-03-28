@@ -80,7 +80,6 @@ void setup()
 {
     Serial.begin(115200);
     MEMORY_CHIP.initPins();
-    MEMORY_CHIP.powerOn();
     TEST_BUTTON.attach(PIN_TEST_BUTTON, INPUT_PULLUP);
     TEST_BUTTON.interval(25);
     pinMode(PIN_HAPPY_LED, OUTPUT);
@@ -95,11 +94,13 @@ void loop()
             digitalWrite(PIN_HAPPY_LED, LOW);
             digitalWrite(PIN_FROWNY_LED, LOW);
         } else if (TEST_BUTTON.rose()) {
+            MEMORY_CHIP.powerOn();
             if (testChip()) {
                 digitalWrite(PIN_HAPPY_LED, HIGH);
             } else {
                 digitalWrite(PIN_FROWNY_LED, HIGH);
             }
+            MEMORY_CHIP.powerOff();
         }
     }
 }

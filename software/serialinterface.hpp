@@ -13,6 +13,8 @@ public:
     SerialInterface(Stream* serial, MemoryChip* memoryChip);
     bool update();
 private:
+    void _turnMemoryOnTemporarily();
+    void _returnMemoryPowerState();
     int _readByteWithTimeout(uint8_t& n);
     int _readUint32WithTimeout(uint32_t& n);
     void _writeUint16(uint16_t n);
@@ -52,6 +54,7 @@ private:
     MemoryChip* _memoryChip;
     SerialState _state;
 
+    bool _prevMemoryPowerState;
     uint16_t _currentOperationStart;
     uint32_t _currentOperationSize;
     uint16_t _currentAddress;

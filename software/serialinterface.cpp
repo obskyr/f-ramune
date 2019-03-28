@@ -20,6 +20,23 @@ bool SerialInterface::update()
     return false;
 }
 
+void SerialInterface::_turnMemoryOnTemporarily()
+{
+    _prevMemoryPowerState = _memoryChip->getIsOn();
+    if (!_prevMemoryPowerState) {
+        _memoryChip->powerOn();
+    }
+}
+
+void SerialInterface::_returnMemoryPowerState()
+{
+    if (_prevMemoryPowerState && !_memoryChip->getIsOn()) {
+        _memoryChip->powerOn();
+    } else if (!_prevMemoryPowerState && _memoryChip->getIsOn()) {
+        _memoryChip->powerOff();
+    }
+}
+
 int SerialInterface::_readByteWithTimeout(uint8_t& n)
 {
     if (!_serial->available()) {
@@ -76,6 +93,8 @@ bool SerialInterface::_checkForCommand()
             return false;
         }
 
+        // When implementing a new command, make sure to call
+        // _turnMemoryOnTemporarily before and _returnMemoryPowerState after.
         switch (command) {
         case static_cast<uint8_t>(SerialCommand::GET_VERSION):
             _writeUint16(FRAMUNE_PROTOCOL_VERSION);
@@ -102,11 +121,17 @@ bool SerialInterface::_commandSetAndAnalyzeChip()
                                      receivedProperties) != 0) {
         return false;
     }
+
+    _turnMemoryOnTemporarily();
+
     _memoryChip->setProperties(&receivedKnownProperties,
                                &receivedProperties);
     _memoryChip->analyzeUnknownProperties();
     _memoryChip->getProperties(&receivedKnownProperties,
                                &receivedProperties);
+
+    _returnMemoryPowerState();
+    
     _sendMemoryChipProperties(receivedKnownProperties, receivedProperties);
     return false;
 }
@@ -188,6 +213,8 @@ int SerialInterface::_readAddressAndSize(uint16_t& address, uint32_t& size)
 
 bool SerialInterface::_commandRead()
 {
+    _turnMemoryOnTemporarily();
+
     uint16_t address;
     uint32_t size;
     if (_readAddressAndSize(address, size) != 0) {return false;}
@@ -214,6 +241,7 @@ bool SerialInterface::_stateReading()
         _currentBytesLeft--;
         return true;
     } else {
+        _returnMemoryPowerState();
         _writeUint32(_currentCrc32.finalize());
         _state = SerialState::WAITING_FOR_COMMAND;
         return false;
@@ -222,6 +250,8 @@ bool SerialInterface::_stateReading()
 
 bool SerialInterface::_commandWrite()
 {
+    _turnMemoryOnTemporarily();
+
     MemoryChipKnownProperties knownProperties;
     MemoryChipProperties properties;
     _memoryChip->getProperties(&knownProperties, &properties);
@@ -287,6 +317,8 @@ bool SerialInterface::_stateWriting()
             _memoryChip->writeByte(_currentOperationStart, prevByte);
         }
         _serial->write(errorCode);
+
+        _returnMemoryPowerState();
 
         _state = SerialState::WAITING_FOR_COMMAND;
         return false;

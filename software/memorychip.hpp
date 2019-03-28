@@ -45,6 +45,7 @@ public:
                uint8_t powerPinOnState);
     void initPins();
 
+    bool getIsOn();
     void powerOff();
     void powerOn();
 
@@ -71,6 +72,7 @@ private:
     PinPortInfo _powerPin;
     uint8_t _powerPinOnState;
 
+    bool _isOn = false;
     bool _inWriteMode = false;
 
     MemoryChipKnownProperties _knownProperties = {false, false, false, false};
