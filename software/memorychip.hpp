@@ -55,6 +55,8 @@ public:
                        const MemoryChipProperties* properties);
     void analyzeUnknownProperties();
     void analyze();
+    bool allAddressesWork();
+    bool addressesWorkBetween(uint32_t start, uint32_t end);
     
     void switchToReadMode();
     uint8_t readByte(uint16_t address);

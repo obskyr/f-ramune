@@ -56,7 +56,7 @@ SerialInterface SERIAL_INTERFACE(&Serial, &MEMORY_CHIP);
 
 Bounce TEST_BUTTON = Bounce();
 
-bool testChip()
+void testChip()
 {
     MemoryChipKnownProperties prevKnownProperties;
     MemoryChipProperties prevProperties;
@@ -65,15 +65,74 @@ bool testChip()
     MemoryChipKnownProperties knownProperties;
     MemoryChipProperties properties;
     MEMORY_CHIP.getProperties(&knownProperties, &properties);
-    MEMORY_CHIP.setProperties(&prevKnownProperties, &prevProperties);
 
-    // To change what the test button tests, change these here criteria!
-    // These criteria test that the chip is fast 32 KiB non-volatile memory.
-    // That is, FRAM. (Or something equivalent, but it's gonna be FRAM.)
-    return (knownProperties.isOperational && properties.isOperational) &&
-           (knownProperties.size && properties.size == 0x8000) &&
-           (knownProperties.isNonVolatile && properties.isNonVolatile) &&
-           (knownProperties.isSlow && !properties.isSlow);
+    if (!(knownProperties.isOperational && properties.isOperational)) {
+        // No chip connected: li'l "wat?" animation.
+        int i = 0;
+        int timesToBlink = 3;
+        while (i < timesToBlink) {
+            digitalWrite(PIN_HAPPY_LED, HIGH);
+            digitalWrite(PIN_FROWNY_LED, HIGH);
+            delay(333);
+            digitalWrite(PIN_HAPPY_LED, LOW);
+            digitalWrite(PIN_FROWNY_LED, LOW);
+            i++;
+            if (i < timesToBlink) {delay(333);}
+        }
+    } else if (!(
+        // To change the properties the test button tests, change these here criteria!
+        // These criteria test that the chip is fast 32 KiB non-volatile memory.
+        // That is, FRAM. (Or something equivalent, but it's gonna be FRAM.)
+        (knownProperties.size && properties.size == 0x8000) &&
+        (knownProperties.isNonVolatile && properties.isNonVolatile) &&
+        (knownProperties.isSlow && !properties.isSlow)
+    )) {
+        // Incorrect properties: red light.
+        digitalWrite(PIN_FROWNY_LED, HIGH);
+    } else {
+        // And for posterity, we test that all memory cells work, too.
+        unsigned long int t1 = millis();
+        // Since testing *all* addresses takes some time, this requires
+        // a little "working..." animation.
+        uint8_t blinkState = HIGH;
+        digitalWrite(PIN_HAPPY_LED, HIGH);
+        unsigned long int prevBlinkMillis = millis();
+        bool allAddressesWork = true;
+        for (uint32_t windowStart = 0; windowStart < properties.size; windowStart += 512) {
+            uint32_t windowEnd = windowStart + 512;
+            windowEnd = windowEnd <= properties.size ? windowEnd : properties.size;
+            if (!MEMORY_CHIP.addressesWorkBetween(windowStart, windowEnd)) {
+                allAddressesWork = false;
+                break;
+            }
+
+            unsigned long int curMillis = millis();
+            if (curMillis - prevBlinkMillis >= 333) {
+                blinkState = !blinkState;
+                digitalWrite(PIN_HAPPY_LED, blinkState);
+                digitalWrite(PIN_FROWNY_LED, !blinkState);
+                prevBlinkMillis = curMillis;
+            }
+        }
+
+        digitalWrite(PIN_HAPPY_LED, LOW);
+        digitalWrite(PIN_FROWNY_LED, LOW);
+        delay(333);
+        if (allAddressesWork) {
+            // Correct properties and all cells working: green light.
+            digitalWrite(PIN_HAPPY_LED, HIGH);
+        } else {
+            // Correct properties but broken memory cells: green and red light.
+            digitalWrite(PIN_HAPPY_LED, HIGH);
+            digitalWrite(PIN_FROWNY_LED, HIGH);
+        }
+
+        // If you don't want to test the entire address space,
+        // comment out the rest of this block and uncomment this line:
+        // digitalWrite(PIN_HAPPY_LED, HIGH);
+    }
+
+    MEMORY_CHIP.setProperties(&prevKnownProperties, &prevProperties);
 }
 
 void setup()
@@ -95,11 +154,7 @@ void loop()
             digitalWrite(PIN_FROWNY_LED, LOW);
         } else if (TEST_BUTTON.rose()) {
             MEMORY_CHIP.powerOn();
-            if (testChip()) {
-                digitalWrite(PIN_HAPPY_LED, HIGH);
-            } else {
-                digitalWrite(PIN_FROWNY_LED, HIGH);
-            }
+            testChip();
             MEMORY_CHIP.powerOff();
         }
     }

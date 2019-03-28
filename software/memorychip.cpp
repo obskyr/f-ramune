@@ -320,6 +320,61 @@ bool MemoryChip::_testNonVolatility()
     return isNonVolatile;
 }
 
+bool MemoryChip::allAddressesWork()
+{
+    if (!_knownProperties.size) {
+        return false; // Not that it means anything in this edge case.
+    }
+    return addressesWorkBetween(0, _properties.size);
+}
+
+bool MemoryChip::addressesWorkBetween(uint32_t start, uint32_t end)
+{
+    bool wasInWriteMode = _inWriteMode;
+
+    bool addressesWorked = true;
+
+    // Same length as in the non-volatility test.
+    uint8_t* window = new uint8_t[512];
+    for (uint32_t windowStart = start; windowStart < end && addressesWorked; windowStart += 512) {
+        uint32_t windowEnd = windowStart + 512;
+        windowEnd = windowEnd <= end ? windowEnd : end;
+        uint32_t length = windowEnd - windowStart;
+
+        // Get the data that was there before...
+        switchToReadMode();
+        readBytes(windowStart, window, length);
+
+        // Write other data...
+        switchToWriteMode();
+        for (uint32_t i = 0; i < length; i++) {
+            writeByte(windowStart + i, window[i] ^ 0xFF);
+        }
+
+        // Confirm that the write worked...
+        switchToReadMode();
+        for (uint32_t i = 0; i < length; i++) {
+            if (readByte(windowStart + i) != (window[i] ^ 0xFF)) {
+                addressesWorked = false;
+                break;
+            }
+        }
+
+        // And put the old data back.
+        switchToWriteMode();
+        writeBytes(windowStart, window, length);
+    }
+    delete[] window;
+
+    if (wasInWriteMode) {
+        switchToWriteMode();
+    } else {
+        switchToReadMode();
+    }
+
+    return addressesWorked;
+}
+
 void MemoryChip::switchToReadMode()
 {
     _inWriteMode = false;
