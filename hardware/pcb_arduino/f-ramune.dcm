@@ -1,0 +1,56 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP 74HC595
+D 8 bits serial in // out Shift Register 3 State Out
+K HCMOS SR 3State
+F 74xx/74HC595.pdf
+$ENDCMP
+#
+$CMP 74LS595
+D 8 bits serial in // out Shift Register 3 State Out
+K TTL SR 3State
+$ENDCMP
+#
+$CMP 74LS596
+D 8 bits serial in // out Shift Register Open Collect.
+K HCMOS SR OpenCol
+$ENDCMP
+#
+$CMP C
+D Unpolarized capacitor
+K cap capacitor
+$ENDCMP
+#
+$CMP FM1808B-SG
+D FRAM Nonvolatile Memory 32Kx8 (256Kb), 5V only, SOIC28
+K FRAM  Nonvolatile Memory 32K 8bit
+F http://www.cypress.com/?mpn=FM1808B-SG
+$ENDCMP
+#
+$CMP FM18W08-SG
+D FRAM Nonvolatile Memory 32Kx8 (256Kb), SOIC28
+K FRAM  Nonvolatile Memory 32K 8bit
+F http://www.cypress.com/?mpn=FM18W08-SG
+$ENDCMP
+#
+$CMP LED
+D LED generic
+K led diode
+$ENDCMP
+#
+$CMP Q_NMOS_GDS
+D Transistor N-MOSFET with substrate diode (general)
+K nmos n-mos n-mosfet transistor
+$ENDCMP
+#
+$CMP R
+D Resistor
+K r res resistor
+$ENDCMP
+#
+$CMP SW_Push
+D Push button switch, generic, two pins
+K switch normally-open pushbutton push-button
+$ENDCMP
+#
+#End Doc Library
