@@ -1,0 +1,158 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP 74HC595
+D 8 bits serial in // out Shift Register 3 State Out
+K HCMOS SR 3State
+F 74xx/74HC595.pdf
+$ENDCMP
+#
+$CMP 74LS595
+D 8 bits serial in // out Shift Register 3 State Out
+K TTL SR 3State
+$ENDCMP
+#
+$CMP 74LS596
+D 8 bits serial in // out Shift Register Open Collect.
+K HCMOS SR OpenCol
+$ENDCMP
+#
+$CMP ATmega168A-PU
+D 20MHz, 16kB Flash, 1kB SRAM, 512B EEPROM, DIP-28
+K AVR 8bit Microcontroller MegaAVR
+F http://ww1.microchip.com/downloads/en/DeviceDoc/ATmega48A_88A_168A-Data-Sheet-40002007A.pdf
+$ENDCMP
+#
+$CMP ATmega168P-20PU
+D 20MHz, 16kB Flash, 1kB SRAM, 512B EEPROM, DIP-28
+K AVR 8bit Microcontroller MegaAVR
+F http://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-8025-8-bit-AVR-Microcontroller-ATmega48P-88P-168P_Datasheet.pdf
+$ENDCMP
+#
+$CMP ATmega168PA-PU
+D 20MHz, 16kB Flash, 1kB SRAM, 512B EEPROM, DIP-28
+K AVR 8bit Microcontroller MegaAVR PicoPower
+F http://ww1.microchip.com/downloads/en/DeviceDoc/ATmega48PA_88PA_168PA-Data-Sheet-40002011A.pdf
+$ENDCMP
+#
+$CMP ATmega168PV-10PU
+D 10MHz, 16kB Flash, 1kB SRAM, 512B EEPROM, DIP-28
+K AVR 8bit Microcontroller MegaAVR
+F http://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-8025-8-bit-AVR-Microcontroller-ATmega48P-88P-168P_Datasheet.pdf
+$ENDCMP
+#
+$CMP ATmega328-PU
+D 20MHz, 32kB Flash, 2kB SRAM, 1kB EEPROM, DIP-28
+K AVR 8bit Microcontroller MegaAVR
+F http://ww1.microchip.com/downloads/en/DeviceDoc/ATmega328_P%20AVR%20MCU%20with%20picoPower%20Technology%20Data%20Sheet%2040001984A.pdf
+$ENDCMP
+#
+$CMP ATmega328P-PU
+D 20MHz, 32kB Flash, 2kB SRAM, 1kB EEPROM, DIP-28
+K AVR 8bit Microcontroller MegaAVR PicoPower
+F http://ww1.microchip.com/downloads/en/DeviceDoc/ATmega328_P%20AVR%20MCU%20with%20picoPower%20Technology%20Data%20Sheet%2040001984A.pdf
+$ENDCMP
+#
+$CMP ATmega48A-PU
+D 20MHz, 4kB Flash, 512B SRAM, 256B EEPROM, DIP-28
+K AVR 8bit Microcontroller MegaAVR
+F http://ww1.microchip.com/downloads/en/DeviceDoc/ATmega48A_88A_168A-Data-Sheet-40002007A.pdf
+$ENDCMP
+#
+$CMP ATmega48P-20PU
+D 20MHz, 4kB Flash, 512B SRAM, 256B EEPROM, DIP-28
+K AVR 8bit Microcontroller MegaAVR
+F http://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-8025-8-bit-AVR-Microcontroller-ATmega48P-88P-168P_Datasheet.pdf
+$ENDCMP
+#
+$CMP ATmega48PA-PU
+D 20MHz, 4kB Flash, 512B SRAM, 256B EEPROM, DIP-28
+K AVR 8bit Microcontroller MegaAVR PicoPower
+F http://ww1.microchip.com/downloads/en/DeviceDoc/ATmega48PA_88PA_168PA-Data-Sheet-40002011A.pdf
+$ENDCMP
+#
+$CMP ATmega48PV-10PU
+D 10MHz, 4kB Flash, 512B SRAM, 256B EEPROM, DIP-28
+K AVR 8bit Microcontroller MegaAVR
+F http://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-8025-8-bit-AVR-Microcontroller-ATmega48P-88P-168P_Datasheet.pdf
+$ENDCMP
+#
+$CMP ATmega88A-PU
+D 20MHz, 8kB Flash, 1kB SRAM, 512B EEPROM, DIP-28
+K AVR 8bit Microcontroller MegaAVR
+F http://ww1.microchip.com/downloads/en/DeviceDoc/ATmega48A_88A_168A-Data-Sheet-40002007A.pdf
+$ENDCMP
+#
+$CMP ATmega88P-20PU
+D 20MHz, 8kB Flash, 1kB SRAM, 512B EEPROM, DIP-28
+K AVR 8bit Microcontroller MegaAVR
+F http://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-8025-8-bit-AVR-Microcontroller-ATmega48P-88P-168P_Datasheet.pdf
+$ENDCMP
+#
+$CMP ATmega88PA-PU
+D 20MHz, 8kB Flash, 1kB SRAM, 512B EEPROM, DIP-28
+K AVR 8bit Microcontroller MegaAVR PicoPower
+F http://ww1.microchip.com/downloads/en/DeviceDoc/ATmega48PA_88PA_168PA-Data-Sheet-40002011A.pdf
+$ENDCMP
+#
+$CMP ATmega88PV-10PU
+D 10MHz, 8kB Flash, 1kB SRAM, 512B EEPROM, DIP-28
+K AVR 8bit Microcontroller MegaAVR
+F http://ww1.microchip.com/downloads/en/DeviceDoc/Atmel-8025-8-bit-AVR-Microcontroller-ATmega48P-88P-168P_Datasheet.pdf
+$ENDCMP
+#
+$CMP C
+D Unpolarized capacitor
+K cap capacitor
+$ENDCMP
+#
+$CMP Crystal
+D Two pin crystal
+K quartz ceramic resonator oscillator
+F ~
+$ENDCMP
+#
+$CMP FM1808B-SG
+D FRAM Nonvolatile Memory 32Kx8 (256Kb), 5V only, SOIC28
+K FRAM  Nonvolatile Memory 32K 8bit
+F http://www.cypress.com/?mpn=FM1808B-SG
+$ENDCMP
+#
+$CMP FM18W08-SG
+D FRAM Nonvolatile Memory 32Kx8 (256Kb), SOIC28
+K FRAM  Nonvolatile Memory 32K 8bit
+F http://www.cypress.com/?mpn=FM18W08-SG
+$ENDCMP
+#
+$CMP LED
+D LED generic
+K led diode
+$ENDCMP
+#
+$CMP Q_NMOS_GDS
+D Transistor N-MOSFET with substrate diode (general)
+K nmos n-mos n-mosfet transistor
+$ENDCMP
+#
+$CMP R
+D Resistor
+K r res resistor
+$ENDCMP
+#
+$CMP SW_Push
+D Push button switch, generic, two pins
+K switch normally-open pushbutton push-button
+$ENDCMP
+#
+$CMP USB_B_Micro
+D USB Micro Type B connector
+K connector USB micro
+F ~
+$ENDCMP
+#
+$CMP USB_B_Mini
+D USB Mini Type B connector
+K connector USB mini
+F ~
+$ENDCMP
+#
+#End Doc Library

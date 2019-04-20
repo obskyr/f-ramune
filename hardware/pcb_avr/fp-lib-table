@@ -1,0 +1,3 @@
+(fp_lib_table
+  (lib (name f-ramune)(type KiCad)(uri ${KIPRJMOD}/f-ramune.pretty)(options "")(descr ""))
+)

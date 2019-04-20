@@ -1,0 +1,1028 @@
+EESchema Schematic File Version 4
+LIBS:f-ramune_avr-cache
+EELAYER 29 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L f-ramune:SW_Push SW1
+U 1 1 5C7D5DB9
+P 3650 1750
+F 0 "SW1" H 3700 1850 50  0000 L CNN
+F 1 "SW_Push" H 3650 1690 50  0000 C CNN
+F 2 "f-ramune:TACTILE_SWITCH_PTH_12MM" H 3650 1950 50  0001 C CNN
+F 3 "" H 3650 1950 50  0001 C CNN
+	1    3650 1750
+	1    0    0    -1  
+$EndComp
+$Comp
+L f-ramune:74HC595 U2
+U 1 1 5C7D67EE
+P 6000 3550
+F 0 "U2" H 6150 4150 50  0000 C CNN
+F 1 "74HC595" H 6200 2950 50  0000 C CNN
+F 2 "f-ramune:DIP-16_W7.62mm_LongPads" H 6000 3550 50  0001 C CNN
+F 3 "" H 6000 3550 50  0001 C CNN
+	1    6000 3550
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+5V #PWR06
+U 1 1 5C7D68A3
+P 6000 2800
+F 0 "#PWR06" H 6000 2650 50  0001 C CNN
+F 1 "+5V" H 6000 2940 50  0000 C CNN
+F 2 "" H 6000 2800 50  0001 C CNN
+F 3 "" H 6000 2800 50  0001 C CNN
+	1    6000 2800
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR07
+U 1 1 5C7D68ED
+P 6000 4300
+F 0 "#PWR07" H 6000 4050 50  0001 C CNN
+F 1 "GND" H 6000 4150 50  0000 C CNN
+F 2 "" H 6000 4300 50  0001 C CNN
+F 3 "" H 6000 4300 50  0001 C CNN
+	1    6000 4300
+	1    0    0    -1  
+$EndComp
+Text GLabel 5200 3600 0    60   Input ~ 0
+SR_Latch
+Text GLabel 5200 3300 0    60   Input ~ 0
+SR_Shift
+$Comp
+L power:+5V #PWR08
+U 1 1 5C7D6A54
+P 4650 3400
+F 0 "#PWR08" H 4650 3250 50  0001 C CNN
+F 1 "+5V" H 4650 3540 50  0000 C CNN
+F 2 "" H 4650 3400 50  0001 C CNN
+F 3 "" H 4650 3400 50  0001 C CNN
+	1    4650 3400
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR09
+U 1 1 5C7D6B3C
+P 5200 3700
+F 0 "#PWR09" H 5200 3450 50  0001 C CNN
+F 1 "GND" H 5200 3550 50  0000 C CNN
+F 2 "" H 5200 3700 50  0001 C CNN
+F 3 "" H 5200 3700 50  0001 C CNN
+	1    5200 3700
+	1    0    0    -1  
+$EndComp
+$Comp
+L f-ramune:74HC595 U1
+U 1 1 5C7D6C50
+P 6000 1550
+F 0 "U1" H 6150 2150 50  0000 C CNN
+F 1 "74HC595" H 6200 950 50  0000 C CNN
+F 2 "f-ramune:DIP-16_W7.62mm_LongPads" H 6000 1550 50  0001 C CNN
+F 3 "" H 6000 1550 50  0001 C CNN
+	1    6000 1550
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+5V #PWR010
+U 1 1 5C7D6C56
+P 6000 800
+F 0 "#PWR010" H 6000 650 50  0001 C CNN
+F 1 "+5V" H 6000 940 50  0000 C CNN
+F 2 "" H 6000 800 50  0001 C CNN
+F 3 "" H 6000 800 50  0001 C CNN
+	1    6000 800 
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR011
+U 1 1 5C7D6C5D
+P 6000 2300
+F 0 "#PWR011" H 6000 2050 50  0001 C CNN
+F 1 "GND" H 6000 2150 50  0000 C CNN
+F 2 "" H 6000 2300 50  0001 C CNN
+F 3 "" H 6000 2300 50  0001 C CNN
+	1    6000 2300
+	1    0    0    -1  
+$EndComp
+Text GLabel 5200 1600 0    60   Input ~ 0
+SR_Latch
+Text GLabel 5200 1300 0    60   Input ~ 0
+SR_Shift
+$Comp
+L power:+5V #PWR012
+U 1 1 5C7D6C68
+P 4650 1400
+F 0 "#PWR012" H 4650 1250 50  0001 C CNN
+F 1 "+5V" H 4650 1540 50  0000 C CNN
+F 2 "" H 4650 1400 50  0001 C CNN
+F 3 "" H 4650 1400 50  0001 C CNN
+	1    4650 1400
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR013
+U 1 1 5C7D6C6F
+P 5200 1700
+F 0 "#PWR013" H 5200 1450 50  0001 C CNN
+F 1 "GND" H 5200 1550 50  0000 C CNN
+F 2 "" H 5200 1700 50  0001 C CNN
+F 3 "" H 5200 1700 50  0001 C CNN
+	1    5200 1700
+	1    0    0    -1  
+$EndComp
+Text GLabel 6800 1100 2    60   Output ~ 0
+A0
+Text GLabel 6800 1200 2    60   Output ~ 0
+A1
+Text GLabel 6800 1300 2    60   Output ~ 0
+A2
+Text GLabel 6800 1400 2    60   Output ~ 0
+A3
+Text GLabel 6800 1500 2    60   Output ~ 0
+A4
+Text GLabel 6800 1600 2    60   Output ~ 0
+A5
+Text GLabel 6800 1700 2    60   Output ~ 0
+A6
+Text GLabel 6800 1800 2    60   Output ~ 0
+A7
+Text GLabel 5200 1100 0    60   Input ~ 0
+SR_Data
+Wire Wire Line
+	6000 2800 6000 2850
+Wire Wire Line
+	6000 4200 6000 4300
+Wire Wire Line
+	5300 3300 5200 3300
+Wire Wire Line
+	5200 3600 5300 3600
+Wire Wire Line
+	5300 3400 4650 3400
+Wire Wire Line
+	5200 3700 5300 3700
+Wire Wire Line
+	6000 800  6000 900 
+Wire Wire Line
+	6000 2200 6000 2300
+Wire Wire Line
+	5300 1300 5200 1300
+Wire Wire Line
+	5200 1600 5300 1600
+Wire Wire Line
+	5300 1400 4650 1400
+Wire Wire Line
+	5200 1700 5300 1700
+Wire Wire Line
+	6700 1100 6800 1100
+Wire Wire Line
+	6700 1200 6800 1200
+Wire Wire Line
+	6800 1300 6700 1300
+Wire Wire Line
+	6700 1400 6800 1400
+Wire Wire Line
+	6800 1500 6700 1500
+Wire Wire Line
+	6700 1600 6800 1600
+Wire Wire Line
+	6800 1700 6700 1700
+Wire Wire Line
+	6700 1800 6800 1800
+Wire Wire Line
+	6700 2000 6800 2000
+Wire Wire Line
+	6800 2000 6800 2550
+Wire Wire Line
+	6800 2550 5200 2550
+Wire Wire Line
+	5200 2550 5200 3100
+Wire Wire Line
+	5200 3100 5300 3100
+Wire Wire Line
+	5200 1100 5300 1100
+Text GLabel 6800 3100 2    60   Output ~ 0
+A8
+Text GLabel 6800 3200 2    60   Output ~ 0
+A9
+Text GLabel 6800 3300 2    60   Output ~ 0
+A10
+Text GLabel 6800 3400 2    60   Output ~ 0
+A11
+Text GLabel 6800 3500 2    60   Output ~ 0
+A12
+Text GLabel 6800 3600 2    60   Output ~ 0
+A13
+Text GLabel 6800 3700 2    60   Output ~ 0
+A14
+Wire Wire Line
+	6700 3100 6800 3100
+Wire Wire Line
+	6800 3200 6700 3200
+Wire Wire Line
+	6700 3300 6800 3300
+Wire Wire Line
+	6800 3400 6700 3400
+Wire Wire Line
+	6700 3500 6800 3500
+Wire Wire Line
+	6800 3600 6700 3600
+Wire Wire Line
+	6700 3700 6800 3700
+NoConn ~ 6700 3800
+NoConn ~ 6700 4000
+$Comp
+L f-ramune:FM18W08-SG U3
+U 1 1 5C7D7E33
+P 9150 1950
+F 0 "U3" H 8850 2800 50  0000 C CNN
+F 1 "Memory (Socket)" H 9500 1100 50  0000 C CNN
+F 2 "f-ramune:ZIF_Socket_DIP-28_With_Alternatives" H 9150 1950 50  0001 C CNN
+F 3 "" H 9150 1950 50  0001 C CNN
+	1    9150 1950
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+5V #PWR015
+U 1 1 5C7D80A1
+P 9150 950
+F 0 "#PWR015" H 9150 800 50  0001 C CNN
+F 1 "+5V" H 9150 1090 50  0000 C CNN
+F 2 "" H 9150 950 50  0001 C CNN
+F 3 "" H 9150 950 50  0001 C CNN
+	1    9150 950 
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR016
+U 1 1 5C7D80C9
+P 9150 3750
+F 0 "#PWR016" H 9150 3500 50  0001 C CNN
+F 1 "GND" H 9150 3600 50  0000 C CNN
+F 2 "" H 9150 3750 50  0001 C CNN
+F 3 "" H 9150 3750 50  0001 C CNN
+	1    9150 3750
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9150 2850 9150 2900
+Wire Wire Line
+	9150 950  9150 1000
+Text GLabel 8550 1250 0    60   Input ~ 0
+A0
+Text GLabel 8550 1350 0    60   Input ~ 0
+A1
+Text GLabel 8550 1450 0    60   Input ~ 0
+A2
+Text GLabel 8550 1550 0    60   Input ~ 0
+A3
+Text GLabel 8550 1650 0    60   Input ~ 0
+A4
+Text GLabel 8550 1750 0    60   Input ~ 0
+A5
+Text GLabel 8550 1850 0    60   Input ~ 0
+A6
+Text GLabel 8550 1950 0    60   Input ~ 0
+A7
+Text GLabel 8550 2050 0    60   Input ~ 0
+A8
+Text GLabel 8550 2150 0    60   Input ~ 0
+A9
+Text GLabel 8550 2250 0    60   Input ~ 0
+A10
+Text GLabel 8550 2350 0    60   Input ~ 0
+A11
+Text GLabel 8550 2450 0    60   Input ~ 0
+A12
+Text GLabel 8550 2550 0    60   Input ~ 0
+A13
+Text GLabel 8550 2650 0    60   Input ~ 0
+A14
+Wire Wire Line
+	8550 1250 8650 1250
+Wire Wire Line
+	8650 1350 8550 1350
+Wire Wire Line
+	8550 1450 8650 1450
+Wire Wire Line
+	8650 1550 8550 1550
+Wire Wire Line
+	8650 1650 8550 1650
+Wire Wire Line
+	8650 1750 8550 1750
+Wire Wire Line
+	8550 1850 8650 1850
+Wire Wire Line
+	8650 1950 8550 1950
+Wire Wire Line
+	8550 2050 8650 2050
+Wire Wire Line
+	8650 2150 8550 2150
+Wire Wire Line
+	8550 2250 8650 2250
+Wire Wire Line
+	8650 2350 8550 2350
+Wire Wire Line
+	8550 2450 8650 2450
+Wire Wire Line
+	8650 2550 8550 2550
+Wire Wire Line
+	8550 2650 8650 2650
+Text GLabel 9750 1250 2    60   BiDi ~ 0
+D0
+Text GLabel 9750 1350 2    60   BiDi ~ 0
+D1
+Text GLabel 9750 1450 2    60   BiDi ~ 0
+D2
+Text GLabel 9750 1550 2    60   BiDi ~ 0
+D3
+Text GLabel 9750 1650 2    60   BiDi ~ 0
+D4
+Text GLabel 9750 1750 2    60   BiDi ~ 0
+D5
+Text GLabel 9750 1850 2    60   BiDi ~ 0
+D6
+Text GLabel 9750 1950 2    60   BiDi ~ 0
+D7
+Wire Wire Line
+	9650 1250 9750 1250
+Wire Wire Line
+	9750 1350 9650 1350
+Wire Wire Line
+	9650 1450 9750 1450
+Wire Wire Line
+	9750 1550 9650 1550
+Wire Wire Line
+	9650 1650 9750 1650
+Wire Wire Line
+	9750 1750 9650 1750
+Wire Wire Line
+	9650 1850 9750 1850
+Wire Wire Line
+	9750 1950 9650 1950
+Text GLabel 9750 2350 2    60   Input ~ 0
+~OE
+Text GLabel 9750 2450 2    60   Input ~ 0
+~WE
+Text GLabel 10450 2650 2    60   Input ~ 0
+~CE
+Wire Wire Line
+	9750 2350 9650 2350
+Wire Wire Line
+	9750 2450 9650 2450
+Wire Wire Line
+	9650 2650 10200 2650
+$Comp
+L f-ramune:R R5
+U 1 1 5C7D960B
+P 10200 2400
+F 0 "R5" H 10300 2450 50  0000 C CNN
+F 1 "10kΩ" H 10350 2350 50  0000 C CNN
+F 2 "f-ramune:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 10130 2400 50  0001 C CNN
+F 3 "" H 10200 2400 50  0001 C CNN
+	1    10200 2400
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+5V #PWR017
+U 1 1 5C7D9751
+P 10200 2150
+F 0 "#PWR017" H 10200 2000 50  0001 C CNN
+F 1 "+5V" H 10200 2290 50  0000 C CNN
+F 2 "" H 10200 2150 50  0001 C CNN
+F 3 "" H 10200 2150 50  0001 C CNN
+	1    10200 2150
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	10200 2650 10200 2550
+Connection ~ 10200 2650
+Wire Wire Line
+	10200 2250 10200 2150
+$Comp
+L f-ramune:Q_NMOS_GDS Q1
+U 1 1 5C7D9D48
+P 9050 3150
+F 0 "Q1" H 9250 3200 50  0000 L CNN
+F 1 "IRL520N" H 9250 3100 50  0000 L CNN
+F 2 "f-ramune:TO-220-3_Vertical" H 9250 3250 50  0001 C CNN
+F 3 "" H 9050 3150 50  0001 C CNN
+	1    9050 3150
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9150 3350 9150 3650
+$Comp
+L f-ramune:R R4
+U 1 1 5C7DF985
+P 8600 3150
+F 0 "R4" V 8680 3150 50  0000 C CNN
+F 1 "100Ω" V 8600 3150 50  0000 C CNN
+F 2 "f-ramune:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 8530 3150 50  0001 C CNN
+F 3 "" H 8600 3150 50  0001 C CNN
+	1    8600 3150
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	8750 3150 8850 3150
+Wire Wire Line
+	8250 3150 8350 3150
+Wire Wire Line
+	8350 3150 8350 3250
+$Comp
+L f-ramune:R R3
+U 1 1 5C7DFABF
+P 8350 3400
+F 0 "R3" H 8250 3350 50  0000 C CNN
+F 1 "10kΩ" H 8200 3450 50  0000 C CNN
+F 2 "f-ramune:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 8280 3400 50  0001 C CNN
+F 3 "" H 8350 3400 50  0001 C CNN
+	1    8350 3400
+	-1   0    0    1   
+$EndComp
+Text GLabel 8250 3150 0    60   Input ~ 0
+Goodnight
+Connection ~ 8350 3150
+Wire Wire Line
+	8350 3550 8350 3650
+Wire Wire Line
+	8350 3650 9150 3650
+Connection ~ 9150 3650
+$Comp
+L power:PWR_FLAG #FLG019
+U 1 1 5C7E0F69
+P 9250 2900
+F 0 "#FLG019" H 9250 2975 50  0001 C CNN
+F 1 "PWR_FLAG" V 9250 3200 50  0000 C CNN
+F 2 "" H 9250 2900 50  0001 C CNN
+F 3 "" H 9250 2900 50  0001 C CNN
+	1    9250 2900
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	9250 2900 9150 2900
+Connection ~ 9150 2900
+Wire Wire Line
+	10200 2650 10450 2650
+Wire Wire Line
+	8350 3150 8450 3150
+Wire Wire Line
+	9150 3650 9150 3750
+Wire Wire Line
+	9150 2900 9150 2950
+Text GLabel 2350 3050 2    50   Input ~ 0
+UART_TX_ATM_RX
+Text GLabel 2350 3150 2    50   Output ~ 0
+UART_RX_ATM_TX
+Text GLabel 2600 6650 2    50   BiDi ~ 0
+USB_DMinus
+Text GLabel 2600 6750 2    50   BiDi ~ 0
+USB_DPlus
+Text GLabel 2600 6050 2    50   Input ~ 0
+UART_RX_ATM_TX
+Text GLabel 2600 6150 2    50   Output ~ 0
+UART_TX_ATM_RX
+$Comp
+L f-ramune:USB_B_Micro J?
+U 1 1 5CBBA832
+P 10050 5300
+F 0 "J?" H 10107 5767 50  0000 C CNN
+F 1 "USB_B_Micro" H 10107 5676 50  0000 C CNN
+F 2 "" H 10200 5250 50  0001 C CNN
+F 3 "~" H 10200 5250 50  0001 C CNN
+	1    10050 5300
+	1    0    0    -1  
+$EndComp
+Text GLabel 10350 5300 2    50   BiDi ~ 0
+USB_DPlus
+Text GLabel 10350 5400 2    50   BiDi ~ 0
+USB_DMinus
+Text GLabel 2350 3250 2    50   Output ~ 0
+~WE
+Text GLabel 2350 3350 2    50   BiDi ~ 0
+D3
+Text GLabel 2350 3450 2    50   BiDi ~ 0
+D4
+Text GLabel 2350 3550 2    50   BiDi ~ 0
+D5
+Text GLabel 2350 3650 2    50   BiDi ~ 0
+D6
+Text GLabel 2350 3750 2    50   BiDi ~ 0
+D7
+$Comp
+L f-ramune:LED D1
+U 1 1 5C7D6036
+P 3050 1150
+F 0 "D1" H 3050 1250 50  0000 C CNN
+F 1 "LED_Red" H 3050 1050 50  0000 C CNN
+F 2 "f-ramune:LED_D5.0mm" H 3050 1150 50  0001 C CNN
+F 3 "" H 3050 1150 50  0001 C CNN
+	1    3050 1150
+	-1   0    0    -1  
+$EndComp
+$Comp
+L f-ramune:LED D2
+U 1 1 5C7D611F
+P 3050 1450
+F 0 "D2" H 3050 1550 50  0000 C CNN
+F 1 "LED_Green" H 3050 1350 50  0000 C CNN
+F 2 "f-ramune:LED_D5.0mm" H 3050 1450 50  0001 C CNN
+F 3 "" H 3050 1450 50  0001 C CNN
+	1    3050 1450
+	-1   0    0    -1  
+$EndComp
+$Comp
+L f-ramune:R R1
+U 1 1 5C7D62E3
+P 3650 1150
+F 0 "R1" V 3730 1150 50  0000 C CNN
+F 1 "330Ω" V 3650 1150 50  0000 C CNN
+F 2 "f-ramune:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 3580 1150 50  0001 C CNN
+F 3 "" H 3650 1150 50  0001 C CNN
+	1    3650 1150
+	0    1    1    0   
+$EndComp
+$Comp
+L f-ramune:R R2
+U 1 1 5C7D6369
+P 3650 1450
+F 0 "R2" V 3730 1450 50  0000 C CNN
+F 1 "330Ω" V 3650 1450 50  0000 C CNN
+F 2 "f-ramune:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 3580 1450 50  0001 C CNN
+F 3 "" H 3650 1450 50  0001 C CNN
+	1    3650 1450
+	0    1    1    0   
+$EndComp
+Text GLabel 2350 1550 2    50   Output ~ 0
+SR_Latch
+Text GLabel 2350 1650 2    50   Output ~ 0
+SR_Data
+Text GLabel 2350 1850 2    50   Output ~ 0
+SR_Shift
+Text GLabel 2350 2250 2    50   BiDi ~ 0
+D0
+Text GLabel 2350 2350 2    50   BiDi ~ 0
+D1
+Text GLabel 2350 2450 2    50   BiDi ~ 0
+D2
+Text GLabel 2350 2550 2    50   Output ~ 0
+Goodnight
+Text GLabel 2350 2650 2    50   Output ~ 0
+~CE
+Text GLabel 2350 2750 2    50   Output ~ 0
+~OE
+$Comp
+L power:GND #PWR0101
+U 1 1 5CC442B0
+P 10050 5900
+F 0 "#PWR0101" H 10050 5650 50  0001 C CNN
+F 1 "GND" H 10055 5727 50  0000 C CNN
+F 2 "" H 10050 5900 50  0001 C CNN
+F 3 "" H 10050 5900 50  0001 C CNN
+	1    10050 5900
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0102
+U 1 1 5CC44A7E
+P 1750 4050
+F 0 "#PWR0102" H 1750 3800 50  0001 C CNN
+F 1 "GND" H 1755 3877 50  0000 C CNN
+F 2 "" H 1750 4050 50  0001 C CNN
+F 3 "" H 1750 4050 50  0001 C CNN
+	1    1750 4050
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0103
+U 1 1 5CC4F8F8
+P 1750 7100
+F 0 "#PWR0103" H 1750 6850 50  0001 C CNN
+F 1 "GND" H 1755 6927 50  0000 C CNN
+F 2 "" H 1750 7100 50  0001 C CNN
+F 3 "" H 1750 7100 50  0001 C CNN
+	1    1750 7100
+	1    0    0    -1  
+$EndComp
+$Comp
+L f-ramune:MCP2221A U?
+U 1 1 5CBCB8DE
+P 1850 6500
+F 0 "U?" H 1622 6796 50  0000 R CNN
+F 1 "MCP2221A" H 1622 6705 50  0000 R CNN
+F 2 "" H 1850 6500 50  0001 C CNN
+F 3 "" H 1850 6500 50  0001 C CNN
+	1    1850 6500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	10050 5700 10050 5800
+Wire Wire Line
+	9950 5700 9950 5800
+Wire Wire Line
+	9950 5800 10050 5800
+Connection ~ 10050 5800
+Wire Wire Line
+	10050 5800 10050 5900
+Wire Wire Line
+	1750 900  1850 900 
+Wire Wire Line
+	1750 900  1750 1050
+$Comp
+L power:+5V #PWR0104
+U 1 1 5CBD0D13
+P 1750 750
+F 0 "#PWR0104" H 1750 600 50  0001 C CNN
+F 1 "+5V" H 1765 923 50  0000 C CNN
+F 2 "" H 1750 750 50  0001 C CNN
+F 3 "" H 1750 750 50  0001 C CNN
+	1    1750 750 
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1750 750  1750 900 
+Connection ~ 1750 900 
+$Comp
+L power:+5V #PWR0105
+U 1 1 5CBD65FD
+P 1800 5300
+F 0 "#PWR0105" H 1800 5150 50  0001 C CNN
+F 1 "+5V" H 1815 5473 50  0000 C CNN
+F 2 "" H 1800 5300 50  0001 C CNN
+F 3 "" H 1800 5300 50  0001 C CNN
+	1    1800 5300
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2900 1450 2350 1450
+Wire Wire Line
+	1850 900  1850 1050
+$Comp
+L f-ramune:ATmega328P-PU U?
+U 1 1 5CBADBDA
+P 1750 2550
+F 0 "U?" H 1106 2641 50  0000 R CNN
+F 1 "ATmega328P-PU" H 1106 2550 50  0000 R CNN
+F 2 "Package_DIP:DIP-28_W7.62mm" H 1106 2459 50  0000 R CIN
+F 3 "http://ww1.microchip.com/downloads/en/DeviceDoc/ATmega328_P%20AVR%20MCU%20with%20picoPower%20Technology%20Data%20Sheet%2040001984A.pdf" H 1750 2550 50  0001 C CNN
+	1    1750 2550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2350 1350 2750 1350
+Wire Wire Line
+	2750 1350 2750 1150
+Wire Wire Line
+	2750 1150 2900 1150
+$Comp
+L power:GND #PWR0106
+U 1 1 5CCA55DB
+P 1250 5300
+F 0 "#PWR0106" H 1250 5050 50  0001 C CNN
+F 1 "GND" H 1255 5127 50  0000 C CNN
+F 2 "" H 1250 5300 50  0001 C CNN
+F 3 "" H 1250 5300 50  0001 C CNN
+	1    1250 5300
+	1    0    0    -1  
+$EndComp
+$Comp
+L f-ramune:C C?
+U 1 1 5CCA669D
+P 2150 5300
+F 0 "C?" V 1898 5300 50  0000 C CNN
+F 1 "0.1uF" V 1989 5300 50  0000 C CNN
+F 2 "" H 2188 5150 50  0001 C CNN
+F 3 "~" H 2150 5300 50  0001 C CNN
+	1    2150 5300
+	0    1    1    0   
+$EndComp
+$Comp
+L f-ramune:C C?
+U 1 1 5CCAB500
+P 1500 5300
+F 0 "C?" V 1248 5300 50  0000 C CNN
+F 1 "0.1uF" V 1339 5300 50  0000 C CNN
+F 2 "" H 1538 5150 50  0001 C CNN
+F 3 "~" H 1500 5300 50  0001 C CNN
+	1    1500 5300
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR0107
+U 1 1 5CCB0831
+P 2400 5300
+F 0 "#PWR0107" H 2400 5050 50  0001 C CNN
+F 1 "GND" H 2405 5127 50  0000 C CNN
+F 2 "" H 2400 5300 50  0001 C CNN
+F 3 "" H 2400 5300 50  0001 C CNN
+	1    2400 5300
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1900 5450 1900 5300
+Wire Wire Line
+	1900 5300 2000 5300
+Wire Wire Line
+	2300 5300 2400 5300
+Wire Wire Line
+	1800 5450 1800 5300
+Wire Wire Line
+	1800 5300 1650 5300
+Connection ~ 1800 5300
+Wire Wire Line
+	1350 5300 1250 5300
+$Comp
+L power:GND #PWR0108
+U 1 1 5CCC196F
+P 1200 900
+F 0 "#PWR0108" H 1200 650 50  0001 C CNN
+F 1 "GND" H 1205 727 50  0000 C CNN
+F 2 "" H 1200 900 50  0001 C CNN
+F 3 "" H 1200 900 50  0001 C CNN
+	1    1200 900 
+	1    0    0    -1  
+$EndComp
+$Comp
+L f-ramune:C C?
+U 1 1 5CCC1975
+P 1450 900
+F 0 "C?" V 1198 900 50  0000 C CNN
+F 1 "0.1uF" V 1289 900 50  0000 C CNN
+F 2 "" H 1488 750 50  0001 C CNN
+F 3 "~" H 1450 900 50  0001 C CNN
+	1    1450 900 
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	1300 900  1200 900 
+Wire Wire Line
+	1750 900  1600 900 
+$Comp
+L f-ramune:Crystal Y?
+U 1 1 5CCFDC84
+P 2900 2100
+F 0 "Y?" H 2900 2368 50  0000 C CNN
+F 1 "16Mhz" H 2900 2277 50  0000 C CNN
+F 2 "" H 2900 2100 50  0001 C CNN
+F 3 "~" H 2900 2100 50  0001 C CNN
+	1    2900 2100
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR0109
+U 1 1 5CD06F9E
+P 4100 2250
+F 0 "#PWR0109" H 4100 2000 50  0001 C CNN
+F 1 "GND" H 4100 2100 50  0000 C CNN
+F 2 "" H 4100 2250 50  0001 C CNN
+F 3 "" H 4100 2250 50  0001 C CNN
+	1    4100 2250
+	1    0    0    -1  
+$EndComp
+$Comp
+L f-ramune:C C?
+U 1 1 5CD0ED66
+P 3650 2250
+F 0 "C?" V 3398 2250 50  0000 C CNN
+F 1 "0.1uF" V 3489 2250 50  0000 C CNN
+F 2 "" H 3688 2100 50  0001 C CNN
+F 3 "~" H 3650 2250 50  0001 C CNN
+	1    3650 2250
+	0    -1   -1   0   
+$EndComp
+$Comp
+L f-ramune:C C?
+U 1 1 5CD129D7
+P 3400 1950
+F 0 "C?" V 3148 1950 50  0000 C CNN
+F 1 "0.1uF" V 3239 1950 50  0000 C CNN
+F 2 "" H 3438 1800 50  0001 C CNN
+F 3 "~" H 3400 1950 50  0001 C CNN
+	1    3400 1950
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	2350 1950 2900 1950
+Connection ~ 2900 1950
+Wire Wire Line
+	2900 1950 3250 1950
+Wire Wire Line
+	2350 2050 2750 2050
+Wire Wire Line
+	2750 2050 2750 2250
+Wire Wire Line
+	2750 2250 2900 2250
+$Comp
+L f-ramune:Programming_Header J?
+U 1 1 5CD3FCC8
+P 8350 5200
+F 0 "J?" H 8123 5146 50  0000 R CNN
+F 1 "Programming_Header" H 8123 5055 50  0000 R CNN
+F 2 "" H 7850 5100 50  0001 C CNN
+F 3 "" H 7850 5100 50  0001 C CNN
+	1    8350 5200
+	1    0    0    -1  
+$EndComp
+Text GLabel 8800 5450 2    50   Output ~ 0
+SR_Data
+Text GLabel 8800 5250 2    50   Output ~ 0
+SR_Shift
+Text GLabel 8800 5150 2    50   Output ~ 0
+ProgramMode
+$Comp
+L power:+5V #PWR0110
+U 1 1 5CD52AFC
+P 8350 4900
+F 0 "#PWR0110" H 8350 4750 50  0001 C CNN
+F 1 "+5V" H 8365 5073 50  0000 C CNN
+F 2 "" H 8350 4900 50  0001 C CNN
+F 3 "" H 8350 4900 50  0001 C CNN
+	1    8350 4900
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0111
+U 1 1 5CD56E78
+P 8350 5700
+F 0 "#PWR0111" H 8350 5450 50  0001 C CNN
+F 1 "GND" H 8355 5527 50  0000 C CNN
+F 2 "" H 8350 5700 50  0001 C CNN
+F 3 "" H 8350 5700 50  0001 C CNN
+	1    8350 5700
+	1    0    0    -1  
+$EndComp
+Text GLabel 3250 2850 2    50   Input ~ 0
+ProgramMode
+Text GLabel 8800 5350 2    50   Input ~ 0
+ProgramResp
+Text GLabel 2900 1650 2    50   Output ~ 0
+ProgramResp
+Wire Wire Line
+	3450 1750 2850 1750
+Wire Wire Line
+	2900 1650 2850 1650
+Wire Wire Line
+	2850 1650 2850 1750
+Connection ~ 2850 1750
+Wire Wire Line
+	2850 1750 2350 1750
+Wire Wire Line
+	3200 1150 3500 1150
+Wire Wire Line
+	3200 1450 3500 1450
+Wire Wire Line
+	2900 2250 3500 2250
+Connection ~ 2900 2250
+Wire Wire Line
+	3800 2250 4100 2250
+Wire Wire Line
+	3550 1950 4100 1950
+Wire Wire Line
+	4100 1950 4100 2250
+Connection ~ 4100 2250
+Wire Wire Line
+	3850 1750 4100 1750
+Wire Wire Line
+	4100 1750 4100 1950
+Connection ~ 4100 1950
+Wire Wire Line
+	3800 1450 4100 1450
+Wire Wire Line
+	4100 1450 4100 1750
+Connection ~ 4100 1750
+Wire Wire Line
+	3800 1150 4100 1150
+Wire Wire Line
+	4100 1150 4100 1450
+Connection ~ 4100 1450
+$Comp
+L f-ramune:C C?
+U 1 1 5CDCFA8B
+P 9400 1000
+F 0 "C?" V 9148 1000 50  0000 C CNN
+F 1 "0.1uF" V 9239 1000 50  0000 C CNN
+F 2 "" H 9438 850 50  0001 C CNN
+F 3 "~" H 9400 1000 50  0001 C CNN
+	1    9400 1000
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR0112
+U 1 1 5CDCFA85
+P 10200 1100
+F 0 "#PWR0112" H 10200 850 50  0001 C CNN
+F 1 "GND" H 10205 927 50  0000 C CNN
+F 2 "" H 10200 1100 50  0001 C CNN
+F 3 "" H 10200 1100 50  0001 C CNN
+	1    10200 1100
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9150 1000 9250 1000
+Connection ~ 9150 1000
+Wire Wire Line
+	9150 1000 9150 1050
+Wire Wire Line
+	9550 1000 10200 1000
+Wire Wire Line
+	10200 1000 10200 1100
+$Comp
+L f-ramune:C C?
+U 1 1 5CDF8155
+P 6600 800
+F 0 "C?" V 6348 800 50  0000 C CNN
+F 1 "0.1uF" V 6439 800 50  0000 C CNN
+F 2 "" H 6638 650 50  0001 C CNN
+F 3 "~" H 6600 800 50  0001 C CNN
+	1    6600 800 
+	0    1    1    0   
+$EndComp
+$Comp
+L f-ramune:C C?
+U 1 1 5CDFCB34
+P 6600 2850
+F 0 "C?" V 6348 2850 50  0000 C CNN
+F 1 "0.1uF" V 6439 2850 50  0000 C CNN
+F 2 "" H 6638 2700 50  0001 C CNN
+F 3 "~" H 6600 2850 50  0001 C CNN
+	1    6600 2850
+	0    1    1    0   
+$EndComp
+$Comp
+L power:GND #PWR0113
+U 1 1 5CE0175E
+P 7150 850
+F 0 "#PWR0113" H 7150 600 50  0001 C CNN
+F 1 "GND" H 7155 677 50  0000 C CNN
+F 2 "" H 7150 850 50  0001 C CNN
+F 3 "" H 7150 850 50  0001 C CNN
+	1    7150 850 
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0114
+U 1 1 5CE061FD
+P 7150 2900
+F 0 "#PWR0114" H 7150 2650 50  0001 C CNN
+F 1 "GND" H 7155 2727 50  0000 C CNN
+F 2 "" H 7150 2900 50  0001 C CNN
+F 3 "" H 7150 2900 50  0001 C CNN
+	1    7150 2900
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6000 800  6450 800 
+Connection ~ 6000 800 
+Wire Wire Line
+	6750 800  7150 800 
+Wire Wire Line
+	7150 800  7150 850 
+Wire Wire Line
+	6450 2850 6000 2850
+Connection ~ 6000 2850
+Wire Wire Line
+	6000 2850 6000 2900
+Wire Wire Line
+	6750 2850 7150 2850
+Wire Wire Line
+	7150 2850 7150 2900
+$Comp
+L f-ramune:R R?
+U 1 1 5CE3081A
+P 3000 2700
+F 0 "R?" H 3100 2750 50  0000 C CNN
+F 1 "10kΩ" H 3150 2650 50  0000 C CNN
+F 2 "f-ramune:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 2930 2700 50  0001 C CNN
+F 3 "" H 3000 2700 50  0001 C CNN
+	1    3000 2700
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+5V #PWR?
+U 1 1 5CE3B0E2
+P 3000 2550
+F 0 "#PWR?" H 3000 2400 50  0001 C CNN
+F 1 "+5V" H 3015 2723 50  0000 C CNN
+F 2 "" H 3000 2550 50  0001 C CNN
+F 3 "" H 3000 2550 50  0001 C CNN
+	1    3000 2550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2350 2850 3000 2850
+Connection ~ 3000 2850
+Wire Wire Line
+	3000 2850 3250 2850
+$EndSCHEMATC
