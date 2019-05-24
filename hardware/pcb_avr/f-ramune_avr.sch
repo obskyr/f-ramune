@@ -20,7 +20,7 @@ U 1 1 5C7D5DB9
 P 3650 1750
 F 0 "SW1" H 3700 1850 50  0000 L CNN
 F 1 "SW_Push" H 3650 1690 50  0000 C CNN
-F 2 "f-ramune:TACTILE_SWITCH_PTH_12MM" H 3650 1950 50  0001 C CNN
+F 2 "f-ramune:SW_Push_1P1T_NO_CK_KSC6xxJ" H 3650 1950 50  0001 C CNN
 F 3 "" H 3650 1950 50  0001 C CNN
 	1    3650 1750
 	1    0    0    -1  
@@ -31,7 +31,7 @@ U 1 1 5C7D67EE
 P 6000 3550
 F 0 "U2" H 6150 4150 50  0000 C CNN
 F 1 "74HC595" H 6200 2950 50  0000 C CNN
-F 2 "f-ramune:DIP-16_W7.62mm_LongPads" H 6000 3550 50  0001 C CNN
+F 2 "f-ramune:SOIC-16_3.9x9.9mm_P1.27mm" H 6000 3550 50  0001 C CNN
 F 3 "" H 6000 3550 50  0001 C CNN
 	1    6000 3550
 	1    0    0    -1  
@@ -90,7 +90,7 @@ U 1 1 5C7D6C50
 P 6000 1550
 F 0 "U1" H 6150 2150 50  0000 C CNN
 F 1 "74HC595" H 6200 950 50  0000 C CNN
-F 2 "f-ramune:DIP-16_W7.62mm_LongPads" H 6000 1550 50  0001 C CNN
+F 2 "f-ramune:SOIC-16_3.9x9.9mm_P1.27mm" H 6000 1550 50  0001 C CNN
 F 3 "" H 6000 1550 50  0001 C CNN
 	1    6000 1550
 	1    0    0    -1  
@@ -248,7 +248,7 @@ L f-ramune:FM18W08-SG U3
 U 1 1 5C7D7E33
 P 9150 1950
 F 0 "U3" H 8850 2800 50  0000 C CNN
-F 1 "Memory (Socket)" H 9500 1100 50  0000 C CNN
+F 1 "FRAM Socket (DIP-28)" H 9500 1100 50  0000 C CNN
 F 2 "f-ramune:ZIF_Socket_DIP-28_With_Alternatives" H 9150 1950 50  0001 C CNN
 F 3 "" H 9150 1950 50  0001 C CNN
 	1    9150 1950
@@ -390,7 +390,7 @@ U 1 1 5C7D960B
 P 10200 2400
 F 0 "R5" H 10300 2450 50  0000 C CNN
 F 1 "10kΩ" H 10350 2350 50  0000 C CNN
-F 2 "f-ramune:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 10130 2400 50  0001 C CNN
+F 2 "f-ramune:R_0603_1608Metric_Pad1.05x0.95mm_HandSolder" V 10130 2400 50  0001 C CNN
 F 3 "" H 10200 2400 50  0001 C CNN
 	1    10200 2400
 	1    0    0    -1  
@@ -430,7 +430,7 @@ U 1 1 5C7DF985
 P 8600 3150
 F 0 "R4" V 8680 3150 50  0000 C CNN
 F 1 "100Ω" V 8600 3150 50  0000 C CNN
-F 2 "f-ramune:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 8530 3150 50  0001 C CNN
+F 2 "f-ramune:R_0603_1608Metric_Pad1.05x0.95mm_HandSolder" V 8530 3150 50  0001 C CNN
 F 3 "" H 8600 3150 50  0001 C CNN
 	1    8600 3150
 	0    1    1    0   
@@ -447,7 +447,7 @@ U 1 1 5C7DFABF
 P 8350 3400
 F 0 "R3" H 8250 3350 50  0000 C CNN
 F 1 "10kΩ" H 8200 3450 50  0000 C CNN
-F 2 "f-ramune:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 8280 3400 50  0001 C CNN
+F 2 "f-ramune:R_0603_1608Metric_Pad1.05x0.95mm_HandSolder" V 8280 3400 50  0001 C CNN
 F 3 "" H 8350 3400 50  0001 C CNN
 	1    8350 3400
 	-1   0    0    1   
@@ -487,28 +487,28 @@ UART_TX_ATM_RX
 Text GLabel 2350 3150 2    50   Output ~ 0
 UART_RX_ATM_TX
 Text GLabel 2600 6650 2    50   BiDi ~ 0
-USB_DMinus
+USB_D_N
 Text GLabel 2600 6750 2    50   BiDi ~ 0
-USB_DPlus
+USB_D_P
 Text GLabel 2600 6050 2    50   Input ~ 0
 UART_RX_ATM_TX
 Text GLabel 2600 6150 2    50   Output ~ 0
 UART_TX_ATM_RX
 $Comp
-L f-ramune:USB_B_Micro J?
+L f-ramune:USB_B J2
 U 1 1 5CBBA832
 P 10050 5300
-F 0 "J?" H 10107 5767 50  0000 C CNN
-F 1 "USB_B_Micro" H 10107 5676 50  0000 C CNN
-F 2 "" H 10200 5250 50  0001 C CNN
+F 0 "J2" H 10107 5767 50  0000 C CNN
+F 1 "USB Type-B Port" H 10107 5676 50  0000 C CNN
+F 2 "f-ramune:USB_B_OST_USB-B1HSxx_Horizontal" H 10200 5250 50  0001 C CNN
 F 3 "~" H 10200 5250 50  0001 C CNN
 	1    10050 5300
 	1    0    0    -1  
 $EndComp
 Text GLabel 10350 5300 2    50   BiDi ~ 0
-USB_DPlus
+USB_D_P
 Text GLabel 10350 5400 2    50   BiDi ~ 0
-USB_DMinus
+USB_D_N
 Text GLabel 2350 3250 2    50   Output ~ 0
 ~WE
 Text GLabel 2350 3350 2    50   BiDi ~ 0
@@ -526,8 +526,8 @@ L f-ramune:LED D1
 U 1 1 5C7D6036
 P 3050 1150
 F 0 "D1" H 3050 1250 50  0000 C CNN
-F 1 "LED_Red" H 3050 1050 50  0000 C CNN
-F 2 "f-ramune:LED_D5.0mm" H 3050 1150 50  0001 C CNN
+F 1 "Red" H 3050 1050 50  0000 C CNN
+F 2 "f-ramune:LED_0603_1608Metric_Pad1.05x0.95mm_HandSolder" H 3050 1150 50  0001 C CNN
 F 3 "" H 3050 1150 50  0001 C CNN
 	1    3050 1150
 	-1   0    0    -1  
@@ -537,8 +537,8 @@ L f-ramune:LED D2
 U 1 1 5C7D611F
 P 3050 1450
 F 0 "D2" H 3050 1550 50  0000 C CNN
-F 1 "LED_Green" H 3050 1350 50  0000 C CNN
-F 2 "f-ramune:LED_D5.0mm" H 3050 1450 50  0001 C CNN
+F 1 "Green" H 3050 1350 50  0000 C CNN
+F 2 "f-ramune:LED_0603_1608Metric_Pad1.05x0.95mm_HandSolder" H 3050 1450 50  0001 C CNN
 F 3 "" H 3050 1450 50  0001 C CNN
 	1    3050 1450
 	-1   0    0    -1  
@@ -549,7 +549,7 @@ U 1 1 5C7D62E3
 P 3650 1150
 F 0 "R1" V 3730 1150 50  0000 C CNN
 F 1 "330Ω" V 3650 1150 50  0000 C CNN
-F 2 "f-ramune:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 3580 1150 50  0001 C CNN
+F 2 "f-ramune:R_0603_1608Metric_Pad1.05x0.95mm_HandSolder" V 3580 1150 50  0001 C CNN
 F 3 "" H 3650 1150 50  0001 C CNN
 	1    3650 1150
 	0    1    1    0   
@@ -560,7 +560,7 @@ U 1 1 5C7D6369
 P 3650 1450
 F 0 "R2" V 3730 1450 50  0000 C CNN
 F 1 "330Ω" V 3650 1450 50  0000 C CNN
-F 2 "f-ramune:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 3580 1450 50  0001 C CNN
+F 2 "f-ramune:R_0603_1608Metric_Pad1.05x0.95mm_HandSolder" V 3580 1450 50  0001 C CNN
 F 3 "" H 3650 1450 50  0001 C CNN
 	1    3650 1450
 	0    1    1    0   
@@ -617,12 +617,12 @@ F 3 "" H 1750 7100 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L f-ramune:MCP2221A U?
+L f-ramune:MCP2221A U5
 U 1 1 5CBCB8DE
 P 1850 6500
-F 0 "U?" H 1622 6796 50  0000 R CNN
+F 0 "U5" H 1622 6796 50  0000 R CNN
 F 1 "MCP2221A" H 1622 6705 50  0000 R CNN
-F 2 "" H 1850 6500 50  0001 C CNN
+F 2 "f-ramune:SOIC-14_3.9x8.7mm_P1.27mm" H 1850 6500 50  0001 C CNN
 F 3 "" H 1850 6500 50  0001 C CNN
 	1    1850 6500
 	1    0    0    -1  
@@ -670,12 +670,12 @@ Wire Wire Line
 Wire Wire Line
 	1850 900  1850 1050
 $Comp
-L f-ramune:ATmega328P-PU U?
+L f-ramune:ATmega328P-AU U4
 U 1 1 5CBADBDA
 P 1750 2550
-F 0 "U?" H 1106 2641 50  0000 R CNN
-F 1 "ATmega328P-PU" H 1106 2550 50  0000 R CNN
-F 2 "Package_DIP:DIP-28_W7.62mm" H 1106 2459 50  0000 R CIN
+F 0 "U4" H 1106 2641 50  0000 R CNN
+F 1 "ATmega328P-AU" H 1106 2550 50  0000 R CNN
+F 2 "f-ramune:TQFP-32_7x7mm_P0.8mm_HandSolder" H 1106 2459 50  0000 R CIN
 F 3 "http://ww1.microchip.com/downloads/en/DeviceDoc/ATmega328_P%20AVR%20MCU%20with%20picoPower%20Technology%20Data%20Sheet%2040001984A.pdf" H 1750 2550 50  0001 C CNN
 	1    1750 2550
 	1    0    0    -1  
@@ -698,23 +698,23 @@ F 3 "" H 1250 5300 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L f-ramune:C C?
+L f-ramune:C C3
 U 1 1 5CCA669D
 P 2150 5300
-F 0 "C?" V 1898 5300 50  0000 C CNN
+F 0 "C3" V 1898 5300 50  0000 C CNN
 F 1 "0.1uF" V 1989 5300 50  0000 C CNN
-F 2 "" H 2188 5150 50  0001 C CNN
+F 2 "f-ramune:C_0603_1608Metric_Pad1.05x0.95mm_HandSolder" H 2188 5150 50  0001 C CNN
 F 3 "~" H 2150 5300 50  0001 C CNN
 	1    2150 5300
 	0    1    1    0   
 $EndComp
 $Comp
-L f-ramune:C C?
+L f-ramune:C C2
 U 1 1 5CCAB500
 P 1500 5300
-F 0 "C?" V 1248 5300 50  0000 C CNN
+F 0 "C2" V 1248 5300 50  0000 C CNN
 F 1 "0.1uF" V 1339 5300 50  0000 C CNN
-F 2 "" H 1538 5150 50  0001 C CNN
+F 2 "f-ramune:C_0603_1608Metric_Pad1.05x0.95mm_HandSolder" H 1538 5150 50  0001 C CNN
 F 3 "~" H 1500 5300 50  0001 C CNN
 	1    1500 5300
 	0    1    1    0   
@@ -755,12 +755,12 @@ F 3 "" H 1200 900 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L f-ramune:C C?
+L f-ramune:C C1
 U 1 1 5CCC1975
 P 1450 900
-F 0 "C?" V 1198 900 50  0000 C CNN
+F 0 "C1" V 1198 900 50  0000 C CNN
 F 1 "0.1uF" V 1289 900 50  0000 C CNN
-F 2 "" H 1488 750 50  0001 C CNN
+F 2 "f-ramune:C_0603_1608Metric_Pad1.05x0.95mm_HandSolder" H 1488 750 50  0001 C CNN
 F 3 "~" H 1450 900 50  0001 C CNN
 	1    1450 900 
 	0    1    1    0   
@@ -770,12 +770,12 @@ Wire Wire Line
 Wire Wire Line
 	1750 900  1600 900 
 $Comp
-L f-ramune:Crystal Y?
+L f-ramune:Crystal Y1
 U 1 1 5CCFDC84
 P 2900 2100
-F 0 "Y?" H 2900 2368 50  0000 C CNN
+F 0 "Y1" H 2900 2368 50  0000 C CNN
 F 1 "16Mhz" H 2900 2277 50  0000 C CNN
-F 2 "" H 2900 2100 50  0001 C CNN
+F 2 "f-ramune:Crystal_SMD_HC49-SD_HandSoldering" H 2900 2100 50  0001 C CNN
 F 3 "~" H 2900 2100 50  0001 C CNN
 	1    2900 2100
 	0    1    1    0   
@@ -792,23 +792,23 @@ F 3 "" H 4100 2250 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L f-ramune:C C?
+L f-ramune:C C5
 U 1 1 5CD0ED66
 P 3650 2250
-F 0 "C?" V 3398 2250 50  0000 C CNN
+F 0 "C5" V 3398 2250 50  0000 C CNN
 F 1 "0.1uF" V 3489 2250 50  0000 C CNN
-F 2 "" H 3688 2100 50  0001 C CNN
+F 2 "f-ramune:C_0603_1608Metric_Pad1.05x0.95mm_HandSolder" H 3688 2100 50  0001 C CNN
 F 3 "~" H 3650 2250 50  0001 C CNN
 	1    3650 2250
 	0    -1   -1   0   
 $EndComp
 $Comp
-L f-ramune:C C?
+L f-ramune:C C4
 U 1 1 5CD129D7
 P 3400 1950
-F 0 "C?" V 3148 1950 50  0000 C CNN
+F 0 "C4" V 3148 1950 50  0000 C CNN
 F 1 "0.1uF" V 3239 1950 50  0000 C CNN
-F 2 "" H 3438 1800 50  0001 C CNN
+F 2 "f-ramune:C_0603_1608Metric_Pad1.05x0.95mm_HandSolder" H 3438 1800 50  0001 C CNN
 F 3 "~" H 3400 1950 50  0001 C CNN
 	1    3400 1950
 	0    -1   -1   0   
@@ -825,12 +825,12 @@ Wire Wire Line
 Wire Wire Line
 	2750 2250 2900 2250
 $Comp
-L f-ramune:Programming_Header J?
+L f-ramune:Programming_Header J1
 U 1 1 5CD3FCC8
 P 8350 5200
-F 0 "J?" H 8123 5146 50  0000 R CNN
-F 1 "Programming_Header" H 8123 5055 50  0000 R CNN
-F 2 "" H 7850 5100 50  0001 C CNN
+F 0 "J1" H 8123 5146 50  0000 R CNN
+F 1 "ISP Header" H 8123 5055 50  0000 R CNN
+F 2 "f-ramune:PinHeader_2x03_P2.54mm_Vertical" H 7850 5100 50  0001 C CNN
 F 3 "" H 7850 5100 50  0001 C CNN
 	1    8350 5200
 	1    0    0    -1  
@@ -908,12 +908,12 @@ Wire Wire Line
 	4100 1150 4100 1450
 Connection ~ 4100 1450
 $Comp
-L f-ramune:C C?
+L f-ramune:C C8
 U 1 1 5CDCFA8B
 P 9400 1000
-F 0 "C?" V 9148 1000 50  0000 C CNN
+F 0 "C8" V 9148 1000 50  0000 C CNN
 F 1 "0.1uF" V 9239 1000 50  0000 C CNN
-F 2 "" H 9438 850 50  0001 C CNN
+F 2 "f-ramune:C_0603_1608Metric_Pad1.05x0.95mm_HandSolder" H 9438 850 50  0001 C CNN
 F 3 "~" H 9400 1000 50  0001 C CNN
 	1    9400 1000
 	0    1    1    0   
@@ -939,23 +939,23 @@ Wire Wire Line
 Wire Wire Line
 	10200 1000 10200 1100
 $Comp
-L f-ramune:C C?
+L f-ramune:C C6
 U 1 1 5CDF8155
 P 6600 800
-F 0 "C?" V 6348 800 50  0000 C CNN
+F 0 "C6" V 6348 800 50  0000 C CNN
 F 1 "0.1uF" V 6439 800 50  0000 C CNN
-F 2 "" H 6638 650 50  0001 C CNN
+F 2 "f-ramune:C_0603_1608Metric_Pad1.05x0.95mm_HandSolder" H 6638 650 50  0001 C CNN
 F 3 "~" H 6600 800 50  0001 C CNN
 	1    6600 800 
 	0    1    1    0   
 $EndComp
 $Comp
-L f-ramune:C C?
+L f-ramune:C C7
 U 1 1 5CDFCB34
 P 6600 2850
-F 0 "C?" V 6348 2850 50  0000 C CNN
+F 0 "C7" V 6348 2850 50  0000 C CNN
 F 1 "0.1uF" V 6439 2850 50  0000 C CNN
-F 2 "" H 6638 2700 50  0001 C CNN
+F 2 "f-ramune:C_0603_1608Metric_Pad1.05x0.95mm_HandSolder" H 6638 2700 50  0001 C CNN
 F 3 "~" H 6600 2850 50  0001 C CNN
 	1    6600 2850
 	0    1    1    0   
@@ -999,21 +999,21 @@ Wire Wire Line
 Wire Wire Line
 	7150 2850 7150 2900
 $Comp
-L f-ramune:R R?
+L f-ramune:R R6
 U 1 1 5CE3081A
 P 3000 2700
-F 0 "R?" H 3100 2750 50  0000 C CNN
+F 0 "R6" H 3100 2750 50  0000 C CNN
 F 1 "10kΩ" H 3150 2650 50  0000 C CNN
-F 2 "f-ramune:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 2930 2700 50  0001 C CNN
+F 2 "f-ramune:R_0603_1608Metric_Pad1.05x0.95mm_HandSolder" V 2930 2700 50  0001 C CNN
 F 3 "" H 3000 2700 50  0001 C CNN
 	1    3000 2700
 	1    0    0    -1  
 $EndComp
 $Comp
-L power:+5V #PWR?
+L power:+5V #PWR0115
 U 1 1 5CE3B0E2
 P 3000 2550
-F 0 "#PWR?" H 3000 2400 50  0001 C CNN
+F 0 "#PWR0115" H 3000 2400 50  0001 C CNN
 F 1 "+5V" H 3015 2723 50  0000 C CNN
 F 2 "" H 3000 2550 50  0001 C CNN
 F 3 "" H 3000 2550 50  0001 C CNN
@@ -1025,4 +1025,26 @@ Wire Wire Line
 Connection ~ 3000 2850
 Wire Wire Line
 	3000 2850 3250 2850
+NoConn ~ 1150 1350
+NoConn ~ 2600 5750
+NoConn ~ 2600 5850
+NoConn ~ 2600 5950
+NoConn ~ 2600 6250
+NoConn ~ 2600 6350
+NoConn ~ 2600 6450
+NoConn ~ 2600 6550
+$Comp
+L power:+5V #PWR0116
+U 1 1 5CDC1A19
+P 10350 5100
+F 0 "#PWR0116" H 10350 4950 50  0001 C CNN
+F 1 "+5V" V 10365 5228 50  0000 L CNN
+F 2 "" H 10350 5100 50  0001 C CNN
+F 3 "" H 10350 5100 50  0001 C CNN
+	1    10350 5100
+	0    1    1    0   
+$EndComp
+NoConn ~ 1150 1550
+NoConn ~ 1150 1650
+NoConn ~ 800  2250
 $EndSCHEMATC
