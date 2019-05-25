@@ -91,7 +91,6 @@ void testChip()
         digitalWrite(PIN_FROWNY_LED, HIGH);
     } else {
         // And for posterity, we test that all memory cells work, too.
-        unsigned long int t1 = millis();
         // Since testing *all* addresses takes some time, this requires
         // a little "working..." animation.
         uint8_t blinkState = HIGH;

@@ -100,7 +100,26 @@ void MemoryChip::powerOn()
         SET_BITS_IN_PORT_HIGH(_wePin.out, _wePin.bitMask);
     }
     _isOn = true;
-    delayMicroseconds(5);
+    /*
+        This should theoretically just be the MOSFET switching time,
+        as in powerOff, but... apparently, some FM18W08s consistently take
+        time to get ready. Only some, though! Some consistently work
+        totally fine with a 5 µs delay here, but some have the access go bad
+        (either the read or the write, possibly both - haven't checked in
+        detail) unless you wait for at least ~130 µs after powering the chip on.
+        Why does this happen? No idea - the datasheet has no such timing
+        characteristic - but it seems that it's consistent across all chips
+        in a certain batch, and perhaps even all chips from a certain factory.
+        The ~130 µs limit has even been observed in at least two batches from
+        different sellers! Beyond that, though, the chips seem to be fine.
+        The figure of 180 µs was arbitrarily chosen for some leeway.
+
+        If this turns out to be significant somehow, a test can of course be
+        devised for it that tests operation both with and without the extra
+        delay. Just make sure to test with it first - otherwise, the byte(s)
+        tested will be irreversibly overwritten.
+    */
+    delayMicroseconds(180);
 }
 
 void MemoryChip::getProperties(MemoryChipKnownProperties* knownProperties,
