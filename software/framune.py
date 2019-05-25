@@ -269,9 +269,12 @@ def main(*argv):
     # Tiny details!
     class KindArgumentParser(argparse.ArgumentParser):
         def error(self, message):
-            print(self.usage % {'prog': self.prog}, file=sys.stderr, end="\n\n")
-            print(self.description % {'prog': self.prog}, file=sys.stderr, end="\n\n")
-            print("Run \"{} --help\" for more detailed information!".format(self.prog), file=sys.stderr)
+            if "the following arguments are required:" in message:
+                print("Usage: {}".format(self.usage % {'prog': self.prog}), file=sys.stderr, end="\n\n")
+                print(self.description % {'prog': self.prog}, file=sys.stderr, end="\n\n")
+                print("Run \"{} --help\" for more detailed information!".format(self.prog), file=sys.stderr)
+            else:
+                print(message, file=sys.stderr)
             sys.exit(1)
 
     # More tiny details!
@@ -300,6 +303,17 @@ def main(*argv):
     except AttributeError:
         pass
 
+    def int_of_any_base(n):
+        prefixes = {
+            '0x': 16,
+            '0o':  8,
+            '0b':  2
+        }
+        try:
+            return int(n[2:], prefixes[n[:2].lower()])
+        except KeyError:
+            return int(n)
+
     parser.add_argument(
         'port',
         help="The serial port your F-Ramune is connected to."
@@ -309,7 +323,6 @@ def main(*argv):
         help="What to do. Valid commands are: \"version\", \"analyze\", \"read\", and \"write\".",
         choices=('version', 'analyze', 'read', 'write')
     )
-    
     parser.add_argument(
         '-h', '--help',
         action='help', default=argparse.SUPPRESS,
@@ -326,12 +339,12 @@ def main(*argv):
         help="Skip verifying that the script's and the F-Ramune's protocol versions match."
     )
     parser.add_argument(
-        '-a', '--address', metavar='address', type=int, default=0,
+        '-a', '--address', metavar='address', type=int_of_any_base, default=0,
         help="Used with the \"read\" and \"write\" commands. The address to start at."
              "Defaults to 0."
     )
     parser.add_argument(
-        '-s', '--size', metavar='size', type=int, default=None,
+        '-s', '--size', metavar='size', type=int_of_any_base, default=None,
         help="Used with the \"read\" and \"write\" commands. The number of bytes."
              "Required for reading if not using --analyze."
     )
