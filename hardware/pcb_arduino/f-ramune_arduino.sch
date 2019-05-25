@@ -1,39 +1,5 @@
-EESchema Schematic File Version 2
-LIBS:f-ramune
-LIBS:power
-LIBS:device
-LIBS:switches
-LIBS:relays
-LIBS:motors
-LIBS:transistors
-LIBS:conn
-LIBS:linear
-LIBS:regul
-LIBS:74xx
-LIBS:cmos4000
-LIBS:adc-dac
-LIBS:memory
-LIBS:xilinx
-LIBS:microcontrollers
-LIBS:dsp
-LIBS:microchip
-LIBS:analog_switches
-LIBS:motorola
-LIBS:texas
-LIBS:intel
-LIBS:audio
-LIBS:interface
-LIBS:digital-audio
-LIBS:philips
-LIBS:display
-LIBS:cypress
-LIBS:siliconi
-LIBS:opto
-LIBS:atmel
-LIBS:contrib
-LIBS:valves
-LIBS:f-ramune_arduino-cache
-EELAYER 25 0
+EESchema Schematic File Version 4
+EELAYER 29 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
@@ -48,18 +14,18 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 $Comp
-L Arduino_Nano_v3.x A1
+L f-ramune:Arduino_Nano_v3.x A1
 U 1 1 5C7D57F6
 P 2750 2400
 F 0 "A1" H 2550 3425 50  0000 R CNN
 F 1 "Arduino_Nano_v3.x" H 2550 3350 50  0000 R CNN
-F 2 "Module:Arduino_Nano" H 2900 1450 50  0001 L CNN
+F 2 "f-ramune:Socket_Strip_Arduino_Nano" H 2900 1450 50  0001 L CNN
 F 3 "" H 2750 1400 50  0001 C CNN
 	1    2750 2400
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR01
+L power:+5V #PWR01
 U 1 1 5C7D5926
 P 2950 1300
 F 0 "#PWR01" H 2950 1150 50  0001 C CNN
@@ -70,7 +36,7 @@ F 3 "" H 2950 1300 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR02
+L power:GND #PWR02
 U 1 1 5C7D59CC
 P 2850 3500
 F 0 "#PWR02" H 2850 3250 50  0001 C CNN
@@ -109,7 +75,7 @@ SR_Shift
 Text GLabel 2150 2900 0    60   Output ~ 0
 SR_Data
 $Comp
-L GND #PWR03
+L power:GND #PWR03
 U 1 1 5C7D5C93
 P 1150 3000
 F 0 "#PWR03" H 1150 2750 50  0001 C CNN
@@ -122,62 +88,62 @@ $EndComp
 Text GLabel 2150 2000 0    60   Output ~ 0
 ~WE
 $Comp
-L SW_Push SW1
+L f-ramune:SW_Push SW1
 U 1 1 5C7D5DB9
 P 1450 3000
 F 0 "SW1" H 1500 3100 50  0000 L CNN
 F 1 "SW_Push" H 1450 2940 50  0000 C CNN
-F 2 "" H 1450 3200 50  0001 C CNN
+F 2 "f-ramune:TACTILE_SWITCH_PTH_12MM" H 1450 3200 50  0001 C CNN
 F 3 "" H 1450 3200 50  0001 C CNN
 	1    1450 3000
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED D1
+L f-ramune:LED D1
 U 1 1 5C7D6036
 P 1550 2100
 F 0 "D1" H 1550 2200 50  0000 C CNN
 F 1 "LED_Red" H 1550 2000 50  0000 C CNN
-F 2 "" H 1550 2100 50  0001 C CNN
+F 2 "f-ramune:LED_D5.0mm" H 1550 2100 50  0001 C CNN
 F 3 "" H 1550 2100 50  0001 C CNN
 	1    1550 2100
 	1    0    0    -1  
 $EndComp
 $Comp
-L LED D2
+L f-ramune:LED D2
 U 1 1 5C7D611F
 P 1550 2400
 F 0 "D2" H 1550 2500 50  0000 C CNN
 F 1 "LED_Green" H 1550 2300 50  0000 C CNN
-F 2 "" H 1550 2400 50  0001 C CNN
+F 2 "f-ramune:LED_D5.0mm" H 1550 2400 50  0001 C CNN
 F 3 "" H 1550 2400 50  0001 C CNN
 	1    1550 2400
 	1    0    0    -1  
 $EndComp
 $Comp
-L R R1
+L f-ramune:R R1
 U 1 1 5C7D62E3
 P 1150 2100
 F 0 "R1" V 1230 2100 50  0000 C CNN
 F 1 "330Ω" V 1150 2100 50  0000 C CNN
-F 2 "" V 1080 2100 50  0001 C CNN
+F 2 "f-ramune:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 1080 2100 50  0001 C CNN
 F 3 "" H 1150 2100 50  0001 C CNN
 	1    1150 2100
 	0    1    1    0   
 $EndComp
 $Comp
-L R R2
+L f-ramune:R R2
 U 1 1 5C7D6369
 P 1150 2400
 F 0 "R2" V 1230 2400 50  0000 C CNN
 F 1 "330Ω" V 1150 2400 50  0000 C CNN
-F 2 "" V 1080 2400 50  0001 C CNN
+F 2 "f-ramune:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 1080 2400 50  0001 C CNN
 F 3 "" H 1150 2400 50  0001 C CNN
 	1    1150 2400
 	0    1    1    0   
 $EndComp
 $Comp
-L GND #PWR04
+L power:GND #PWR04
 U 1 1 5C7D63AF
 P 900 2200
 F 0 "#PWR04" H 900 1950 50  0001 C CNN
@@ -188,7 +154,7 @@ F 3 "" H 900 2200 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR05
+L power:GND #PWR05
 U 1 1 5C7D63CF
 P 900 2500
 F 0 "#PWR05" H 900 2250 50  0001 C CNN
@@ -199,18 +165,18 @@ F 3 "" H 900 2500 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74HC595 U2
+L f-ramune:74HC595 U2
 U 1 1 5C7D67EE
 P 5900 3550
 F 0 "U2" H 6050 4150 50  0000 C CNN
 F 1 "74HC595" H 6100 2950 50  0000 C CNN
-F 2 "" H 5900 3550 50  0001 C CNN
+F 2 "f-ramune:DIP-16_W7.62mm_LongPads" H 5900 3550 50  0001 C CNN
 F 3 "" H 5900 3550 50  0001 C CNN
 	1    5900 3550
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR06
+L power:+5V #PWR06
 U 1 1 5C7D68A3
 P 5900 2800
 F 0 "#PWR06" H 5900 2650 50  0001 C CNN
@@ -221,7 +187,7 @@ F 3 "" H 5900 2800 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR07
+L power:GND #PWR07
 U 1 1 5C7D68ED
 P 5900 4300
 F 0 "#PWR07" H 5900 4050 50  0001 C CNN
@@ -236,7 +202,7 @@ SR_Latch
 Text GLabel 5100 3300 0    60   Input ~ 0
 SR_Shift
 $Comp
-L +5V #PWR08
+L power:+5V #PWR08
 U 1 1 5C7D6A54
 P 4550 3400
 F 0 "#PWR08" H 4550 3250 50  0001 C CNN
@@ -247,7 +213,7 @@ F 3 "" H 4550 3400 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR09
+L power:GND #PWR09
 U 1 1 5C7D6B3C
 P 5100 3700
 F 0 "#PWR09" H 5100 3450 50  0001 C CNN
@@ -258,18 +224,18 @@ F 3 "" H 5100 3700 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74HC595 U1
+L f-ramune:74HC595 U1
 U 1 1 5C7D6C50
 P 5900 1550
 F 0 "U1" H 6050 2150 50  0000 C CNN
 F 1 "74HC595" H 6100 950 50  0000 C CNN
-F 2 "" H 5900 1550 50  0001 C CNN
+F 2 "f-ramune:DIP-16_W7.62mm_LongPads" H 5900 1550 50  0001 C CNN
 F 3 "" H 5900 1550 50  0001 C CNN
 	1    5900 1550
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR010
+L power:+5V #PWR010
 U 1 1 5C7D6C56
 P 5900 800
 F 0 "#PWR010" H 5900 650 50  0001 C CNN
@@ -280,7 +246,7 @@ F 3 "" H 5900 800 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR011
+L power:GND #PWR011
 U 1 1 5C7D6C5D
 P 5900 2300
 F 0 "#PWR011" H 5900 2050 50  0001 C CNN
@@ -295,7 +261,7 @@ SR_Latch
 Text GLabel 5100 1300 0    60   Input ~ 0
 SR_Shift
 $Comp
-L +5V #PWR012
+L power:+5V #PWR012
 U 1 1 5C7D6C68
 P 4550 1400
 F 0 "#PWR012" H 4550 1250 50  0001 C CNN
@@ -306,7 +272,7 @@ F 3 "" H 4550 1400 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR013
+L power:GND #PWR013
 U 1 1 5C7D6C6F
 P 5100 1700
 F 0 "#PWR013" H 5100 1450 50  0001 C CNN
@@ -357,7 +323,7 @@ Wire Wire Line
 Wire Wire Line
 	3250 2700 3350 2700
 Wire Wire Line
-	2850 3400 2850 3500
+	2850 3400 2850 3450
 Wire Wire Line
 	2950 1400 2950 1300
 Wire Wire Line
@@ -486,12 +452,12 @@ NoConn ~ 3250 2200
 NoConn ~ 3250 1900
 NoConn ~ 2750 3400
 $Comp
-L C C1
+L f-ramune:C C1
 U 1 1 5C7D7996
 P 3500 1800
 F 0 "C1" V 3650 1800 50  0000 C CNN
 F 1 "10 µF (optional)" V 3350 1800 50  0000 C CNN
-F 2 "" H 3538 1650 50  0001 C CNN
+F 2 "f-ramune:C_Disc_D3.0mm_W1.6mm_P2.50mm" H 3538 1650 50  0001 C CNN
 F 3 "" H 3500 1800 50  0001 C CNN
 	1    3500 1800
 	0    1    1    0   
@@ -501,7 +467,7 @@ Wire Wire Line
 Wire Wire Line
 	3650 1800 3750 1800
 $Comp
-L GND #PWR014
+L power:GND #PWR014
 U 1 1 5C7D7BAA
 P 3750 1800
 F 0 "#PWR014" H 3750 1550 50  0001 C CNN
@@ -514,18 +480,18 @@ $EndComp
 NoConn ~ 3250 3000
 NoConn ~ 3250 3100
 $Comp
-L FM18W08-SG U3
+L f-ramune:FM18W08-SG U3
 U 1 1 5C7D7E33
 P 8600 2300
 F 0 "U3" H 8300 3150 50  0000 C CNN
 F 1 "Memory (Socket)" H 8950 1450 50  0000 C CNN
-F 2 "" H 8600 2300 50  0001 C CNN
+F 2 "f-ramune:ZIF_Socket_DIP-28_With_Alternatives" H 8600 2300 50  0001 C CNN
 F 3 "" H 8600 2300 50  0001 C CNN
 	1    8600 2300
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR015
+L power:+5V #PWR015
 U 1 1 5C7D80A1
 P 8600 1300
 F 0 "#PWR015" H 8600 1150 50  0001 C CNN
@@ -536,7 +502,7 @@ F 3 "" H 8600 1300 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L GND #PWR016
+L power:GND #PWR016
 U 1 1 5C7D80C9
 P 8600 4100
 F 0 "#PWR016" H 8600 3850 50  0001 C CNN
@@ -547,7 +513,7 @@ F 3 "" H 8600 4100 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	8600 3200 8600 3300
+	8600 3200 8600 3250
 Wire Wire Line
 	8600 1300 8600 1400
 Text GLabel 8000 1600 0    60   Input ~ 0
@@ -653,20 +619,20 @@ Wire Wire Line
 Wire Wire Line
 	9200 2800 9100 2800
 Wire Wire Line
-	9100 3000 9900 3000
+	9100 3000 9650 3000
 $Comp
-L R R5
+L f-ramune:R R5
 U 1 1 5C7D960B
 P 9650 2750
 F 0 "R5" H 9750 2800 50  0000 C CNN
 F 1 "10kΩ" H 9800 2700 50  0000 C CNN
-F 2 "" V 9580 2750 50  0001 C CNN
+F 2 "f-ramune:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 9580 2750 50  0001 C CNN
 F 3 "" H 9650 2750 50  0001 C CNN
 	1    9650 2750
 	1    0    0    -1  
 $EndComp
 $Comp
-L +5V #PWR017
+L power:+5V #PWR017
 U 1 1 5C7D9751
 P 9650 2500
 F 0 "#PWR017" H 9650 2350 50  0001 C CNN
@@ -682,25 +648,25 @@ Connection ~ 9650 3000
 Wire Wire Line
 	9650 2600 9650 2500
 $Comp
-L Q_NMOS_GDS Q1
+L f-ramune:Q_NMOS_GDS Q1
 U 1 1 5C7D9D48
 P 8500 3500
 F 0 "Q1" H 8700 3550 50  0000 L CNN
 F 1 "IRL520N" H 8700 3450 50  0000 L CNN
-F 2 "" H 8700 3600 50  0001 C CNN
+F 2 "f-ramune:TO-220-3_Vertical" H 8700 3600 50  0001 C CNN
 F 3 "" H 8500 3500 50  0001 C CNN
 	1    8500 3500
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	8600 3700 8600 4100
+	8600 3700 8600 4000
 $Comp
-L R R4
+L f-ramune:R R4
 U 1 1 5C7DF985
 P 8050 3500
 F 0 "R4" V 8130 3500 50  0000 C CNN
 F 1 "100Ω" V 8050 3500 50  0000 C CNN
-F 2 "" V 7980 3500 50  0001 C CNN
+F 2 "f-ramune:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 7980 3500 50  0001 C CNN
 F 3 "" H 8050 3500 50  0001 C CNN
 	1    8050 3500
 	0    1    1    0   
@@ -708,16 +674,16 @@ $EndComp
 Wire Wire Line
 	8200 3500 8300 3500
 Wire Wire Line
-	7700 3500 7900 3500
+	7700 3500 7800 3500
 Wire Wire Line
 	7800 3500 7800 3600
 $Comp
-L R R3
+L f-ramune:R R3
 U 1 1 5C7DFABF
 P 7800 3750
 F 0 "R3" H 7700 3700 50  0000 C CNN
 F 1 "10kΩ" H 7650 3800 50  0000 C CNN
-F 2 "" V 7730 3750 50  0001 C CNN
+F 2 "f-ramune:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal" V 7730 3750 50  0001 C CNN
 F 3 "" H 7800 3750 50  0001 C CNN
 	1    7800 3750
 	-1   0    0    1   
@@ -731,7 +697,7 @@ Wire Wire Line
 	7800 4000 8600 4000
 Connection ~ 8600 4000
 $Comp
-L PWR_FLAG #FLG018
+L power:PWR_FLAG #FLG018
 U 1 1 5C7E0A55
 P 2950 3450
 F 0 "#FLG018" H 2950 3525 50  0001 C CNN
@@ -745,7 +711,7 @@ Wire Wire Line
 	2950 3450 2850 3450
 Connection ~ 2850 3450
 $Comp
-L PWR_FLAG #FLG019
+L power:PWR_FLAG #FLG019
 U 1 1 5C7E0F69
 P 8700 3250
 F 0 "#FLG019" H 8700 3325 50  0001 C CNN
@@ -760,4 +726,14 @@ Wire Wire Line
 Connection ~ 8600 3250
 Text Notes 3200 1600 0    47   ~ 0
 This capacitor disables\nDTR reset on the Arduino,\nwhich makes programming\nrequire a press of the reset\nbutton. Leave off if pySerial\ncan avoid triggering DTR\non your operating system.
+Wire Wire Line
+	9650 3000 9900 3000
+Wire Wire Line
+	7800 3500 7900 3500
+Wire Wire Line
+	8600 4000 8600 4100
+Wire Wire Line
+	2850 3450 2850 3500
+Wire Wire Line
+	8600 3250 8600 3300
 $EndSCHEMATC
