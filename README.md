@@ -12,7 +12,7 @@ F-Ramune is a device that lets you test and program 28-pin FRAM chips (e.g. the 
 
 It features a reprogrammable pushbutton that lets you quickly test chips – out of the box, it's set to check that a chip is 32 KiB of genuine FRAM in full working order – and a serial interface with accompanying software that lets you program your memory chips from your PC.
 
-I made this to test FM1808s of dubious (i.e. cheap Chinese) origin so that the Game Boy cartridge immortalization mod (link to come) would become more feasible and accessible. I expect that to be the main use of F-Ramune, but it's written in an extensible fashion – if you want to test or program FRAM (or SRAM!) in a different form factor or pinout, not much needs to be changed.
+I made this to test FM1808s of dubious (i.e. cheap Chinese) origin so that the [Game Boy cartridge immortalization mod](https://www.tindie.com/products/obskyr/save-immortalizer-kit-for-game-boy/) would become more feasible and accessible. I expect that to be the main use of F-Ramune, but it's written in an extensible fashion – if you want to test or program FRAM (or SRAM!) in a different form factor or pinout, not much needs to be changed.
 
 ## Getting started
 
